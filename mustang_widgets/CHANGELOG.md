@@ -17,3 +17,7 @@
 ## 1.0.4
 
 * Changed RouteRedirect widget parameter name from test to redirect
+
+## 1.0.5
+
+* Fixed lint errors
