@@ -60,7 +60,7 @@ class AppModelGenerator extends Generator {
     String appModelVarName = Utils.class2Var(appModelName);
 
     List<String> modelImports = Utils.getImports(
-      element.library.imports,
+      element.library.libraryImports,
       buildStep.inputId.package,
     );
 
@@ -140,8 +140,8 @@ class AppModelGenerator extends Generator {
       }
 
       // List/Map fields are not allowed
-      if (element.type.element != null &&
-          ['List', 'Map'].contains(element.type.element!.displayName)) {
+      if (element.type.element2 != null &&
+          ['List', 'Map'].contains(element.type.element2!.displayName)) {
         throw InvalidGenerationSourceError(
             'Error: List/Map are not allowed for fields. Use BuiltList/BuiltMap instead',
             todo: 'Use BuiltList/BuiltMap',

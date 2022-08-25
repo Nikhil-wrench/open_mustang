@@ -380,7 +380,7 @@ class ScreenServiceGenerator extends Generator {
     }
 
     List<String> modelImports =
-        Utils.getRawImports(element.library?.imports ?? []);
+        Utils.getRawImports(element.library?.libraryImports ?? []);
     if (modelImports
             .indexWhere((element) => element.contains('material.dart')) !=
         -1) {

@@ -21,3 +21,7 @@
 ## 1.0.5
 
 * Fixed lint errors
+
+## 1.0.6
+
+* Fixed lint errors

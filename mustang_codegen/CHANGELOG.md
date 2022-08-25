@@ -145,3 +145,7 @@
 
 - Fix: null exception when route is discarded
 - Added support for global app events
+
+## 1.1.6
+
+- Fixed deprecated usage

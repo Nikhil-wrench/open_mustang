@@ -48,7 +48,7 @@ class ScreenStateGenerator extends Generator {
       stateModelFields.add(declaration);
     }
     List<String> stateImports = Utils.getImports(
-      element.library.imports,
+      element.library.libraryImports,
       buildStep.inputId.package,
     );
 
@@ -133,7 +133,8 @@ class ScreenStateGenerator extends Generator {
   void _validate(Element element, BuildStep buildStep) {
     String currentPkgName = buildStep.inputId.package;
 
-    Utils.getRawImports(element.library?.imports ?? []).forEach((import) {
+    Utils.getRawImports(element.library?.libraryImports ?? [])
+        .forEach((import) {
       // Fields of State should be models from the same package i.e. from **/src/models
       // directory, unless there is a dependent package with it's own models
       // and those models need to be used in the State class
@@ -190,7 +191,7 @@ class ScreenStateGenerator extends Generator {
     }
 
     for (FieldElement element in stateClass.fields) {
-      if (element.type.element?.displayName == 'dynamic') {
+      if (element.type.element2?.displayName == 'dynamic') {
         throw InvalidGenerationSourceError(
           'Error: Import is missing for the field',
           todo: 'Add import for the field',
@@ -219,9 +220,9 @@ class ScreenStateGenerator extends Generator {
             element: element);
       }
 
-      if (element.type.element != null &&
-          element.type.element!.metadata.isEmpty &&
-          !element.type.element!.declaration
+      if (element.type.element2 != null &&
+          element.type.element2!.metadata.isEmpty &&
+          !element.type.element2!.declaration
               .toString()
               .contains('implements Built')) {
         throw InvalidGenerationSourceError(
@@ -230,8 +231,8 @@ class ScreenStateGenerator extends Generator {
             element: element);
       }
 
-      if (element.type.element != null &&
-          !element.type.element!.declaration
+      if (element.type.element2 != null &&
+          !element.type.element2!.declaration
               .toString()
               .contains('implements Built') &&
           !_hasAppModelAnnotation(element)) {
@@ -244,7 +245,7 @@ class ScreenStateGenerator extends Generator {
   }
 
   bool _hasAppModelAnnotation(FieldElement element) {
-    return element.type.element!.metadata.any((elementAnnotation) {
+    return element.type.element2!.metadata.any((elementAnnotation) {
       return (elementAnnotation.element!.name?.toLowerCase() ?? '') ==
           '$AppModel'.toLowerCase();
     });

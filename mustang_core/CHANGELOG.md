@@ -81,3 +81,6 @@
 
 ## 1.1.5
 - Added support for global events
+
+## 1.1.6
+- Updated packages

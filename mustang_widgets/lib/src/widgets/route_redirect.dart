@@ -31,7 +31,7 @@ class RouteRedirect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (redirect()) {
-      SchedulerBinding.instance?.addPostFrameCallback((_) async {
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
         if (pushReplace) {
           Navigator.pushNamedAndRemoveUntil(
             context,

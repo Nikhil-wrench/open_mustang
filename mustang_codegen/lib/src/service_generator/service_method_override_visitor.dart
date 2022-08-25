@@ -108,7 +108,7 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
           if (aspect.type?.getDisplayString(withNullability: false) != null) {
             List<ParameterElement> invokeParameters = [];
             Element? aspectExtensionObject = aspect
-                .type?.element?.library?.topLevelElements
+                .type?.element2?.library?.topLevelElements
                 .firstWhere((element) => element.displayName.contains('\$\$'));
 
             aspectExtensionObject
@@ -120,7 +120,7 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
               aspect.type,
             );
             String annotationImport =
-                aspect.type?.element?.location?.encoding ?? '';
+                aspect.type?.element2?.location?.encoding ?? '';
             if (annotationImport.isNotEmpty) {
               annotationImport = annotationImport.split(';').first;
               imports.add("import '$annotationImport';");
@@ -158,7 +158,7 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
           if (aspect.type?.getDisplayString(withNullability: false) != null) {
             List<ParameterElement> invokeParameters = [];
             Element? aspectExtensionObject = aspect
-                .type?.element?.library?.topLevelElements
+                .type?.element2?.library?.topLevelElements
                 .firstWhere((element) => element.displayName.contains('\$\$'));
 
             aspectExtensionObject
@@ -170,7 +170,7 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
               aspect.type,
             );
             String annotationImport =
-                aspect.type?.element?.location?.encoding ?? '';
+                aspect.type?.element2?.location?.encoding ?? '';
             if (annotationImport.isNotEmpty) {
               annotationImport = annotationImport.split(';').first;
               imports.add("import '$annotationImport';");
@@ -206,7 +206,7 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
         if (aspect.type?.getDisplayString(withNullability: false) != null) {
           List<ParameterElement> invokeParameters = [];
           Element? aspectExtensionObject = aspect
-              .type?.element?.library?.topLevelElements
+              .type?.element2?.library?.topLevelElements
               .firstWhere((element) => element.displayName.contains('\$\$'));
 
           aspectExtensionObject
@@ -218,7 +218,7 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
           );
 
           String annotationImport =
-              aspect.type?.element?.location?.encoding ?? '';
+              aspect.type?.element2?.location?.encoding ?? '';
           if (annotationImport.isNotEmpty) {
             annotationImport = annotationImport.split(';').first;
             imports.add("import '$annotationImport';");

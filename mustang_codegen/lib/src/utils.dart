@@ -72,9 +72,10 @@ class Utils {
         pkgName.split('_').map((e) => capitalizeFirst(e)).toList().join(''));
   }
 
-  static List<String> getImports(List<ImportElement> elements, String package) {
+  static List<String> getImports(
+      List<LibraryImportElement> elements, String package) {
     List<String> importsList = [];
-    for (ImportElement importElement in elements) {
+    for (LibraryImportElement importElement in elements) {
       String importedLib =
           '${importElement.importedLibrary?.definingCompilationUnit.declaration ?? ''}';
       if (importedLib.isNotEmpty && !importedLib.contains('mustang_core')) {
@@ -100,7 +101,7 @@ class Utils {
     return importsList;
   }
 
-  static List<String> getRawImports(List<ImportElement> elements) {
+  static List<String> getRawImports(List<LibraryImportElement> elements) {
     return elements
         .map((importElement) =>
             '${importElement.importedLibrary?.definingCompilationUnit.declaration ?? ''}')
@@ -132,7 +133,7 @@ class Utils {
     if (element.parameters.isNotEmpty) {
       element.parameters.toList().forEach((parameter) {
         String importForParam =
-            parameter.type.element?.location?.encoding ?? '';
+            parameter.type.element2?.location?.encoding ?? '';
 
         if (importForParam.isNotEmpty) {
           importForParam = importForParam.split(';').first;
