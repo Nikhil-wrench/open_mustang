@@ -252,7 +252,7 @@ class AppModelGenerator extends Generator {
         final Iterable wireNameAnnotation = const TypeChecker
             .fromRuntime(WireNameField).annotationsOf(fieldElement);
         if (wireNameAnnotation.isNotEmpty) {
-          wireName = serializeAnnotation
+          wireName = wireNameAnnotation
               .single
               .getField('wireNameField')
               ?.toStringValue();

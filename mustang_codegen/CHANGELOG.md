@@ -153,3 +153,8 @@
 ## 1.1.7
 
 - Model generator supports WireNameField annotation
+
+## 1.1.8
+
+- Bug fix
+
