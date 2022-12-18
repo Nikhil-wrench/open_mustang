@@ -84,3 +84,6 @@
 
 ## 1.1.6
 - Updated packages
+
+## 1.1.7
+- Introduced new annotation `WireNameField` to support custom name for the field when the object is serialized

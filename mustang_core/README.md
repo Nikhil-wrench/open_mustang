@@ -53,6 +53,7 @@ rebuild the UI whenever there is a change in the application state.
 - An abstract class annotated with `appModel`
 - Model name should start with `$`
 - Initialize fields with `InitField` annotation
+- Serialize field with a different name using `WireNameField` annotation
 - Methods/Getters/Setters are `NOT` supported inside `Model` classes
 - If a field should be excluded when a `Model` is persisted to disk, annotate that field with `SerializeField(false)`
     
@@ -65,6 +66,9 @@ rebuild the UI whenever there is a change in the application state.
     
       @InitField(false)
       late bool admin; 
+  
+      @WireNameField('postalCode')
+      late int zip;
     
       @InitField(['user', 'default'])
       late BuiltList<String> roles;
