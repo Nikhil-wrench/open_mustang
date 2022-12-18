@@ -6,6 +6,7 @@ class AppModelField {
     this.initListValue,
     this.initMapValue,
     this.serializeField,
+    this.wireName,
   });
 
   final String name;
@@ -14,6 +15,7 @@ class AppModelField {
   final List<Object?>? initListValue;
   final Map<Object, Object?>? initMapValue;
   final bool? serializeField;
+  final String? wireName;
 
   @override
   String toString() {

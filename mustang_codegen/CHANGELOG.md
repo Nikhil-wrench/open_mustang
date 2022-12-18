@@ -149,3 +149,7 @@
 ## 1.1.6
 
 - Fixed deprecated usage
+
+## 1.1.7
+
+- Model generator supports WireNameField annotation
