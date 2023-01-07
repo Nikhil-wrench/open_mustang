@@ -158,3 +158,6 @@
 
 - Bug fix
 
+## 1.1.9
+- lint fixes
+

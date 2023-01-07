@@ -168,8 +168,9 @@ class AppModelGenerator extends Generator {
         List<Object?>? initListValue;
         Map<Object, Object?>? initMapValue;
 
-        final Iterable initFieldAnnotation = const TypeChecker
-            .fromRuntime(InitField).annotationsOf(fieldElement);
+        final Iterable initFieldAnnotation =
+            const TypeChecker.fromRuntime(InitField)
+                .annotationsOf(fieldElement);
 
         if (initFieldAnnotation.isNotEmpty) {
           switch (typeToMatch) {
@@ -199,7 +200,9 @@ class AppModelGenerator extends Generator {
               break;
             case 'BuiltMap':
               if (initFieldAnnotation.single.getField('object') != null) {
-                if (initFieldAnnotation.single.getField('object')!.toMapValue() !=
+                if (initFieldAnnotation.single
+                        .getField('object')!
+                        .toMapValue() !=
                     null) {
                   initMapValue = {};
                   initFieldAnnotation.single
@@ -218,10 +221,11 @@ class AppModelGenerator extends Generator {
               break;
             case 'BuiltList':
               if (initFieldAnnotation.single.getField('object') != null) {
-                if (initFieldAnnotation.single.getField('object')!.toListValue() !=
+                if (initFieldAnnotation.single
+                        .getField('object')!
+                        .toListValue() !=
                     null) {
-                  initListValue = initFieldAnnotation
-                      .single
+                  initListValue = initFieldAnnotation.single
                       .getField('object')!
                       .toListValue()!
                       .map((e) {
@@ -239,34 +243,34 @@ class AppModelGenerator extends Generator {
         }
 
         bool? serializeField;
-        final Iterable serializeAnnotation = const TypeChecker
-            .fromRuntime(SerializeField).annotationsOf(fieldElement);
+        final Iterable serializeAnnotation =
+            const TypeChecker.fromRuntime(SerializeField)
+                .annotationsOf(fieldElement);
         if (serializeAnnotation.isNotEmpty) {
-          serializeField = serializeAnnotation
-              .single
-              .getField('serializeField')
-              ?.toBoolValue() ?? true;
+          serializeField = serializeAnnotation.single
+                  .getField('serializeField')
+                  ?.toBoolValue() ??
+              true;
         }
 
         String? wireName;
-        final Iterable wireNameAnnotation = const TypeChecker
-            .fromRuntime(WireNameField).annotationsOf(fieldElement);
+        final Iterable wireNameAnnotation =
+            const TypeChecker.fromRuntime(WireNameField)
+                .annotationsOf(fieldElement);
         if (wireNameAnnotation.isNotEmpty) {
-          wireName = wireNameAnnotation
-              .single
+          wireName = wireNameAnnotation.single
               .getField('wireNameField')
               ?.toStringValue();
         }
 
         return AppModelField(
-          name: fieldName,
-          type: fieldType,
-          initValue: initValue,
-          initListValue: initListValue,
-          initMapValue: initMapValue,
-          serializeField: serializeField,
-          wireName: wireName
-        );
+            name: fieldName,
+            type: fieldType,
+            initValue: initValue,
+            initListValue: initListValue,
+            initMapValue: initMapValue,
+            serializeField: serializeField,
+            wireName: wireName);
       },
     ).toList();
   }
@@ -283,7 +287,7 @@ class AppModelGenerator extends Generator {
         }
         if (field.wireName != null) {
           String wireNameArg = "wireName: '${field.wireName}'";
-          if(builtValueFieldOptions == null) {
+          if (builtValueFieldOptions == null) {
             builtValueFieldOptions = wireNameArg;
           } else {
             builtValueFieldOptions = ', $wireNameArg';
