@@ -90,3 +90,7 @@
 
 ## 1.1.8
 - lint fixes
+
+## 1.1.9
+- Updated documentation for Mustang Store and Mustang Cache
+- Deprecated redundant methods in Mustang Store

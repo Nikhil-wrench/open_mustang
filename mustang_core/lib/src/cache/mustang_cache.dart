@@ -1,34 +1,32 @@
 import 'package:hive/hive.dart';
 import 'package:mustang_core/src/store/mustang_store.dart';
 
-/// [MustangCache] provides utility methods to save/lookup instances
-/// of any type.
+/// [MustangCache] is disk-based key-value database
 ///
-/// Only one instance of cache store exists for an App.
+/// It allows clients to save stringified objects to the disk. When a
+/// serialized object is read from the cache, it will be deserialized and
+/// saved to the MustangStore.
 class MustangCache {
-  /// Hive Box Name to cache the model data
-  static String cacheName = '';
+  /// Identifier for the cached data
+  static String _cacheName = '';
 
-  static void configCache(String cacheName) async {
-    MustangCache.cacheName = cacheName;
-  }
-
-  /// Creates [storeLocation] in the file system to save serialized objects
-  /// [storeLocation] is optional for Web
-  static Future<void> initCache(String? storeLocation) async {
+  /// Creates a directory on the disk to save stringified objects.
+  /// [storeLocation] is optional for Web.
+  static Future<void> initCache(String cacheName, String? storeLocation) async {
     if (storeLocation != null) {
       Hive.init(storeLocation);
     }
-    await Hive.openLazyBox(cacheName);
+    _cacheName = cacheName;
+    await Hive.openLazyBox(_cacheName);
   }
 
-  /// Writes serialized object to a file
+  /// Writes stringified object to the disk.
   static Future<void> addObject(
     String key,
     String modelKey,
     String modelValue,
   ) async {
-    LazyBox lazyBox = Hive.lazyBox(cacheName);
+    LazyBox lazyBox = Hive.lazyBox(_cacheName);
     Map<String, String> value;
 
     if (lazyBox.isOpen) {
@@ -42,9 +40,9 @@ class MustangCache {
     }
   }
 
-  /// Deserializes the previously serialized string into an object and
-  /// - updates MustangStore
-  /// - updates Persistence store
+  /// Deserializes objects in the cache and load them into the Mustang Store.
+  /// Note: Deserialization has to be done by the caller. This method only
+  /// returns serialized objects and their types.
   static Future<void> restoreObjects(
     String key,
     void Function(
@@ -54,7 +52,7 @@ class MustangCache {
     )
         callback,
   ) async {
-    LazyBox lazyBox = Hive.lazyBox(cacheName);
+    LazyBox lazyBox = Hive.lazyBox(_cacheName);
     if (lazyBox.isOpen) {
       Map<String, String> cacheData =
           (await lazyBox.get(key))?.cast<String, String>() ?? {};
@@ -65,15 +63,17 @@ class MustangCache {
     }
   }
 
+  /// Delete all serialized objects from the cache
   static Future<void> deleteObjects(String key) async {
-    LazyBox lazyBox = Hive.lazyBox(cacheName);
+    LazyBox lazyBox = Hive.lazyBox(_cacheName);
     if (lazyBox.isOpen) {
       await lazyBox.delete(key);
     }
   }
 
+  /// Checks if an object exists in the cache using it's key
   static bool itemExists(String key) {
-    LazyBox lazyBox = Hive.lazyBox(cacheName);
+    LazyBox lazyBox = Hive.lazyBox(_cacheName);
     return ((lazyBox.isOpen) && lazyBox.containsKey(key));
   }
 }

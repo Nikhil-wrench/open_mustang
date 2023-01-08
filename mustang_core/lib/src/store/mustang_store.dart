@@ -3,33 +3,37 @@ import 'dart:collection';
 import 'package:hive/hive.dart';
 import 'package:mustang_core/src/cache/mustang_cache.dart';
 
-/// [MustangStore] provides utility methods to save/lookup instances
-/// of any type.
+/// [MustangStore] is an in-memory key-value object database.
 ///
-/// Only 1 instance of a type exists at any point of time.
+/// - Objects are saved to the store using it's type as the key
+/// - Types should not be null. E.g User? is not valid
+/// - If an object exists, saving that object in the store will overwrite
+/// the existing object
 class MustangStore {
-  // HashMap is used to store objects when large flag is enabled
+  // Underlying data structure for the objects in the store
   static final HashMap<String, Object?> _hashStore = HashMap();
 
-  static const nonNullType = 'Mustang store accepts only non-nullable types';
+  static const String _nullTypeError =
+      'Mustang store accepts only non-nullable types';
 
-  // Flat to persist the data
-  static bool persistent = false;
+  // Flag to toggle persistence
+  static bool _persistent = false;
 
-  // Hive Box Name to store the model data
-  static String? hiveBox;
+  // Identifier for the persisted objects
+  static String? _storeName;
 
-  /// Looks up instance of type [T], if exists. Returns null if instance of
-  /// type [T] is not found.
+  /// Looks up for an object of type [T].
+  /// Returns null if the object is not found.
   static T? get<T>() {
     return _hashStore[T.toString()] as T?;
   }
 
-  /// Saves instance [t] after removing, if exists, an instance of [T]
+  /// Saves an object [t] of type [T].
+  /// If the object of the same type exists, it will be replaced.
   static void update<T>(T t) {
     assert(
       !(T.toString().endsWith('?')),
-      nonNullType,
+      _nullTypeError,
     );
     _hashStore.update(
       T.toString(),
@@ -38,41 +42,40 @@ class MustangStore {
     );
   }
 
-  /// Saves instances [t] and [s] after removing, if exists,
-  /// an instance of type [T] and an instance of type [S].
+  /// Saves objects [t], [s] of type [T] and [S] respectively.
+  /// If any object of the same type exists, it will be replaced.
   static void update2<T, S>(T t, S s) {
     assert(
       !(T.toString().endsWith('?') || S.toString().endsWith('?')),
-      nonNullType,
+      _nullTypeError,
     );
     update<T>(t);
     update<S>(s);
   }
 
-  /// Saves instances [t], [s], [u] after removing, if exists,
-  /// an instance of type [T], instance of type [S] and instance of type [U]
+  /// Saves objects [t], [s], [u] of type [T],[S] and [U] respectively.
+  /// If an object of the same type exists, it will be replaced.
   static void update3<T, S, U>(T t, S s, U u) {
     assert(
       !(T.toString().endsWith('?') ||
           S.toString().endsWith('?') ||
           U.toString().endsWith('?')),
-      nonNullType,
+      _nullTypeError,
     );
     update<T>(t);
     update<S>(s);
     update<U>(u);
   }
 
-  /// Saves instances [t], [s], [u], [v] after removing, if exists,
-  /// an instance of type [T], instance of type [S], instance of type [U]
-  /// and instance of type [V]
+  /// Saves objects [t], [s], [u], [v] of type [T],[S], [U] and [V] respectively.
+  /// If an object of the same type exists, it will be replaced.
   static void update4<T, S, U, V>(T t, S s, U u, V v) {
     assert(
       !(T.toString().endsWith('?') ||
           S.toString().endsWith('?') ||
           U.toString().endsWith('?') ||
           V.toString().endsWith('?')),
-      nonNullType,
+      _nullTypeError,
     );
     update<T>(t);
     update<S>(s);
@@ -80,7 +83,7 @@ class MustangStore {
     update<V>(v);
   }
 
-  /// Removes instance of type [T], if exists
+  /// Removes an object of type [T]
   static void delete<T>() {
     _hashStore.remove(T.toString());
   }
@@ -88,49 +91,70 @@ class MustangStore {
   /// Delete all objects from the store
   static void nuke() async {
     _hashStore.clear();
-    if (persistent && hiveBox != null) {
-      Box box = Hive.box(hiveBox!);
+    if (_persistent && _storeName != null) {
+      Box box = Hive.box(_storeName!);
       if (box.isOpen) {
         await box.deleteAll(box.keys);
       }
     }
   }
 
+  /// Configures persistence for the store
+  @Deprecated('Use configPersistence method')
   static void config({
     bool isPersistent = false,
     String? storeName,
   }) async {
-    persistent = isPersistent;
-    hiveBox = storeName;
+    _persistent = isPersistent;
+    _storeName = storeName;
   }
 
-  /// Writes serialized object to a file
+  /// If persistence is enabled, it saves stringified object to the disk.
   static Future<void> persistObject(String key, String value) async {
-    if (persistent && hiveBox != null) {
-      Box box = Hive.box(hiveBox!);
+    if (_persistent && _storeName != null) {
+      Box box = Hive.box(_storeName!);
       if (box.isOpen) {
         await box.put(key, value);
       }
     }
   }
 
-  /// Creates directory [boxDir] in the file system to save serialized objects
-  /// [storeLocation] is optional for Web
+  /// Creates a directory on the disk to save stringified objects.
+  /// [storeLocation] is optional for Web.
+  /// Persistence also enables cache behind the scenes.
+  static Future<void> configPersistence(
+      String storeName, String? storeLocation) async {
+    _persistent = true;
+    _storeName = storeName;
+
+    if (storeLocation != null) {
+      Hive.init(storeLocation);
+    }
+    await Hive.openBox(_storeName!);
+
+    // Config cache when persistence is in use
+    await MustangCache.initCache('${_storeName}Cache', storeLocation);
+  }
+
+  /// Creates a directory on the disk to save stringified objects.
+  /// [storeLocation] is optional for Web.
+  /// Persistence also enables cache behind the scenes.
+  @Deprecated('Use configPersistence method')
   static Future<void> initPersistence(String? storeLocation) async {
-    if (persistent && hiveBox != null) {
+    if (_persistent && _storeName != null) {
       if (storeLocation != null) {
         Hive.init(storeLocation);
       }
-      await Hive.openBox(hiveBox!);
+      await Hive.openBox(_storeName!);
 
-      // Cache Initialization
-      MustangCache.configCache('${hiveBox}Cache');
-      await MustangCache.initCache(storeLocation);
+      // Config cache when persistence is in use
+      await MustangCache.initCache('${_storeName}Cache', storeLocation);
     }
   }
 
-  /// Deserializes the previously serialized string into an object
-  /// and makes it available in the MustangStore
+  /// Allows the caller to deserialize and load them into the Mustang Store.
+  /// Note: Deserialization has to be done by the caller. This method only
+  /// returns serialized objects and their types.
   static Future<void> restoreState(
     void Function(
       void Function<T>(T t) update,
@@ -140,8 +164,8 @@ class MustangStore {
         callback,
     List<String> serializerNames,
   ) async {
-    if (persistent && hiveBox != null) {
-      Box box = Hive.box(hiveBox!);
+    if (_persistent && _storeName != null) {
+      Box box = Hive.box(_storeName!);
       if (box.isOpen) {
         for (dynamic key in box.keys) {
           if (serializerNames.contains(key)) {
@@ -152,9 +176,10 @@ class MustangStore {
     }
   }
 
+  /// If persistence is enabled, it delete all persisted objects
   static Future<void> deletePersistedState(List<String> deleteModels) async {
-    if (persistent && hiveBox != null) {
-      Box box = Hive.box(hiveBox!);
+    if (_persistent && _storeName != null) {
+      Box box = Hive.box(_storeName!);
       if (box.isOpen) {
         await box.deleteAll(deleteModels);
       }

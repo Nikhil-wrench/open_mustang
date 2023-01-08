@@ -161,3 +161,5 @@
 ## 1.1.9
 - lint fixes
 
+## 1.1.10
+- Upgraded dependencies
