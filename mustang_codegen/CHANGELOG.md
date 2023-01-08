@@ -163,3 +163,6 @@
 
 ## 1.1.10
 - Upgraded dependencies
+
+## 1.1.11
+- Fixed deprecated analyzer APIs

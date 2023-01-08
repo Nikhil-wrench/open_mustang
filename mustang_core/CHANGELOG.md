@@ -94,3 +94,6 @@
 ## 1.1.9
 - Updated documentation for Mustang Store and Mustang Cache
 - Deprecated redundant methods in Mustang Store
+
+## 1.1.10
+- doc fix

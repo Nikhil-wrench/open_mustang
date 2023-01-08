@@ -140,8 +140,8 @@ class AppModelGenerator extends Generator {
       }
 
       // List/Map fields are not allowed
-      if (element.type.element2 != null &&
-          ['List', 'Map'].contains(element.type.element2!.displayName)) {
+      if (element.type.element != null &&
+          ['List', 'Map'].contains(element.type.element!.displayName)) {
         throw InvalidGenerationSourceError(
             'Error: List/Map are not allowed for fields. Use BuiltList/BuiltMap instead',
             todo: 'Use BuiltList/BuiltMap',

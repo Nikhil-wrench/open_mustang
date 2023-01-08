@@ -191,7 +191,7 @@ class ScreenStateGenerator extends Generator {
     }
 
     for (FieldElement element in stateClass.fields) {
-      if (element.type.element2?.displayName == 'dynamic') {
+      if (element.type.element?.displayName == 'dynamic') {
         throw InvalidGenerationSourceError(
           'Error: Import is missing for the field',
           todo: 'Add import for the field',
@@ -220,9 +220,9 @@ class ScreenStateGenerator extends Generator {
             element: element);
       }
 
-      if (element.type.element2 != null &&
-          element.type.element2!.metadata.isEmpty &&
-          !element.type.element2!.declaration
+      if (element.type.element != null &&
+          element.type.element!.metadata.isEmpty &&
+          !element.type.element!.declaration
               .toString()
               .contains('implements Built')) {
         throw InvalidGenerationSourceError(
@@ -231,8 +231,8 @@ class ScreenStateGenerator extends Generator {
             element: element);
       }
 
-      if (element.type.element2 != null &&
-          !element.type.element2!.declaration
+      if (element.type.element != null &&
+          !element.type.element!.declaration
               .toString()
               .contains('implements Built') &&
           !_hasAppModelAnnotation(element)) {
@@ -245,7 +245,7 @@ class ScreenStateGenerator extends Generator {
   }
 
   bool _hasAppModelAnnotation(FieldElement element) {
-    return element.type.element2!.metadata.any((elementAnnotation) {
+    return element.type.element!.metadata.any((elementAnnotation) {
       return (elementAnnotation.element!.name?.toLowerCase() ?? '') ==
           '$AppModel'.toLowerCase();
     });

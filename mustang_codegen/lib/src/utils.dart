@@ -133,7 +133,7 @@ class Utils {
     if (element.parameters.isNotEmpty) {
       element.parameters.toList().forEach((parameter) {
         String importForParam =
-            parameter.type.element2?.location?.encoding ?? '';
+            parameter.type.element?.location?.encoding ?? '';
 
         if (importForParam.isNotEmpty) {
           importForParam = importForParam.split(';').first;

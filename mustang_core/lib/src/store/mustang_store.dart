@@ -176,7 +176,7 @@ class MustangStore {
     }
   }
 
-  /// If persistence is enabled, it delete all persisted objects
+  /// If persistence is enabled, it deletes all persisted objects
   static Future<void> deletePersistedState(List<String> deleteModels) async {
     if (_persistent && _storeName != null) {
       Box box = Hive.box(_storeName!);
