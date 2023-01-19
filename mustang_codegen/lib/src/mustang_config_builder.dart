@@ -2,22 +2,32 @@ import 'dart:async';
 
 import 'package:build/build.dart';
 import 'package:mustang_codegen/src/utils.dart';
+import 'package:source_gen/source_gen.dart';
 
 class MustangConfigBuilder implements Builder {
   static const String modelsPath = 'src/models';
   static const String configPath = 'lib/$modelsPath';
-  static const String configFile = 'mustang_state.dart';
+  static String configFile = '';
   static const String className = 'className';
   static const String fields = 'fields';
   static const String defaultValue = 'defaultValue';
   static const String serialize = 'serialize';
   static const String name = 'name';
   static const String type = 'type';
-  
 
   @override
   Map<String, List<String>> get buildExtensions {
-    return const {
+    dynamic mustantStateConfig = Utils.getMustantStateConfig();
+    if (mustantStateConfig != null) {
+      String modelName = mustantStateConfig[className];
+      configFile = '${Utils.class2File(modelName)}.dart';
+    } else {
+      throw InvalidGenerationSourceError(
+        'Error: Mustant state config missing',
+        todo: 'Add mustant state config',
+      );
+    }
+    return {
       r'$lib$': ['$modelsPath/$configFile'],
     };
   }
@@ -32,18 +42,35 @@ class MustangConfigBuilder implements Builder {
     String pkgName = buildStep.inputId.package;
     AssetId outFile = AssetId(pkgName, '$configPath/$configFile');
 
-    dynamic customConfigPackage = Utils.getCustomConfigPackage();
-    if (customConfigPackage != null) {
-      modelName = customConfigPackage[className];
-      for (dynamic element in customConfigPackage[fields]) {
-        if (element.isNotEmpty) {
+    dynamic mustantStateConfig = Utils.getMustantStateConfig();
+    if (mustantStateConfig != null) {
+      modelName = mustantStateConfig[className];
+      for (dynamic element in mustantStateConfig[fields]) {
+        if (element != null) {
           modelFieldsList.add(element);
+        } else {
+          throw InvalidGenerationSourceError(
+            'Error: Mustant state config fields are missing',
+            todo: 'Add mustant state config fields',
+          );
         }
       }
+    } else {
+      throw InvalidGenerationSourceError(
+        'Error: Mustant state config missing',
+        todo: 'Add mustant state config',
+      );
     }
 
     for (dynamic modelField in modelFieldsList) {
-      modelFields.writeln(_parseFields(modelField));
+      if (modelField != null) {
+        modelFields.writeln(_parseFields(modelField));
+      } else {
+        throw InvalidGenerationSourceError(
+          'Error: Mustant state config fields are missing',
+          todo: 'Add mustant state config fields',
+        );
+      }
     }
 
     String out = _generate(

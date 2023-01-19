@@ -1,8 +1,8 @@
 builders:
-  app_congig_builder:
+  mustang_config_builder:
     import: 'package:mustang_codegen/builder.dart'
     builder_factories: [ 'mustangConfigBuilder' ]
-    build_extensions: { '.dart': [ '.conf.dart' ] }
+    build_extensions: { '.yaml': [ '.dart' ] }
     auto_apply: root_package
     build_to: source
     runs_before: [ 'mustang_codegen:model_builder' ]
@@ -32,7 +32,6 @@ builders:
         include: [ '**/aspects/*.dart' ]
       }
     }
- 
   app_serializer_builder:
     import: 'package:mustang_codegen/builder.dart'
     builder_factories: [ 'appSerializerBuilder' ]

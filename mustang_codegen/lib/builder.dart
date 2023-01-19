@@ -8,6 +8,9 @@ import 'package:mustang_codegen/src/service_generator/screen_service_generator.d
 import 'package:mustang_codegen/src/state_generator/screen_state_generator.dart';
 import 'package:source_gen/source_gen.dart';
 
+/// Generates mustang config
+Builder mustangConfigBuilder(BuilderOptions options) => MustangConfigBuilder();
+
 /// Generates code for @Around, @Before, @After annotations
 Builder appAspectLibraryBuilder(BuilderOptions options) => LibraryBuilder(
       AppAspectGenerator(),
@@ -41,5 +44,3 @@ Builder screenLibraryBuilder(BuilderOptions options) => LibraryBuilder(
 /// Generates built_value serializer
 Builder appSerializerBuilder(BuilderOptions options) => AppSerializerBuilder();
 
-/// Generates globle config
-Builder mustangConfigBuilder(BuilderOptions options) => MustangConfigBuilder();
