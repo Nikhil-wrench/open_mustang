@@ -166,3 +166,7 @@
 
 ## 1.1.11
 - Fixed deprecated analyzer APIs
+
+## 1.1.12
+- Added support to generated mustang state object using mustang.yaml
+
