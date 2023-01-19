@@ -172,3 +172,7 @@
 
 ## 1.1.13
 - Downgraded analyzer dep to 5.2.0
+
+## 1.1.14
+- Made mustang state object generation optional
+
