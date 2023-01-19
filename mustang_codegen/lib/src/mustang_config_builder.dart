@@ -47,8 +47,8 @@ class MustangConfigBuilder implements Builder {
           modelFieldsList.add(element);
         } else {
           throw InvalidGenerationSourceError(
-            'Error: Mustant state config fields are missing',
-            todo: 'Add mustant state config fields',
+            'Error: Mustang state config fields are missing',
+            todo: 'Add Mustang state config fields',
           );
         }
       }
@@ -61,8 +61,8 @@ class MustangConfigBuilder implements Builder {
         modelFields.writeln(_parseFields(modelField));
       } else {
         throw InvalidGenerationSourceError(
-          'Error: Mustant state config fields are missing',
-          todo: 'Add mustant state config fields',
+          'Error: Mustang state config fields are missing',
+          todo: 'Add Mustang state config fields',
         );
       }
     }
