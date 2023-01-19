@@ -12,6 +12,7 @@ class Utils {
   static const String configFile = 'mustang.yaml';
 
   // Keys in mustang-cli.yaml
+  static const String mustangStateConfigKey = 'mustangStateConfig';
   static const String serializerKey = 'serializer';
   static const String screenKey = 'screen';
   static const String screenImportsKey = 'imports';
@@ -110,14 +111,30 @@ class Utils {
 
   static String? getCustomSerializerPackage() {
     String configFilePath = p.join(p.current, configFile);
+
+    dynamic yamlConfig = getYamlConfig(configFilePath);
+    if (yamlConfig[serializerKey] != null) {
+      return yamlConfig[serializerKey];
+    }
+    return null;
+  }
+
+  static dynamic getMustangStateConfig() {
+    String configFilePath = p.join(p.current, configFile);
+
+    dynamic yamlConfig = getYamlConfig(configFilePath);
+    if (yamlConfig[mustangStateConfigKey] != null) {
+      return yamlConfig[mustangStateConfigKey];
+    }
+    return null;
+  }
+
+  static dynamic getYamlConfig(String configFilePath) {
     if (configFilePath.isNotEmpty && File(configFilePath).existsSync()) {
       File configFile = File(configFilePath);
       String rawConfig = configFile.readAsStringSync();
 
-      dynamic yamlConfig = loadYaml(rawConfig);
-      if (yamlConfig[serializerKey] != null) {
-        return yamlConfig[serializerKey];
-      }
+      return loadYaml(rawConfig);
     }
     return null;
   }
