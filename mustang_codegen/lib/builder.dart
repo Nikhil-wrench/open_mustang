@@ -43,4 +43,3 @@ Builder screenLibraryBuilder(BuilderOptions options) => LibraryBuilder(
 
 /// Generates built_value serializer
 Builder appSerializerBuilder(BuilderOptions options) => AppSerializerBuilder();
-

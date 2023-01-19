@@ -170,3 +170,5 @@
 ## 1.1.12
 - Added support to generated mustang state object using mustang.yaml
 
+## 1.1.13
+- Downgraded analyzer dep to 5.2.0
