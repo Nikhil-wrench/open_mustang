@@ -22,10 +22,7 @@ class MustangConfigBuilder implements Builder {
       String modelName = mustangStateConfig[className];
       configFile = '${Utils.class2File(modelName)}.dart';
     } else {
-      throw InvalidGenerationSourceError(
-        'Error: Mustant state config missing',
-        todo: 'Add mustant state config',
-      );
+      return {};
     }
     return {
       r'$lib$': ['$modelsPath/$configFile'],
@@ -50,16 +47,13 @@ class MustangConfigBuilder implements Builder {
           modelFieldsList.add(element);
         } else {
           throw InvalidGenerationSourceError(
-            'Error: Mustant state config fields are missing',
-            todo: 'Add mustant state config fields',
+            'Error: Mustang state config fields are missing',
+            todo: 'Add Mustang state config fields',
           );
         }
       }
     } else {
-      throw InvalidGenerationSourceError(
-        'Error: Mustant state config missing',
-        todo: 'Add mustant state config',
-      );
+      return;
     }
 
     for (dynamic modelField in modelFieldsList) {
@@ -67,8 +61,8 @@ class MustangConfigBuilder implements Builder {
         modelFields.writeln(_parseFields(modelField));
       } else {
         throw InvalidGenerationSourceError(
-          'Error: Mustant state config fields are missing',
-          todo: 'Add mustant state config fields',
+          'Error: Mustang state config fields are missing',
+          todo: 'Add Mustang state config fields',
         );
       }
     }
