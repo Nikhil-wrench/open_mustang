@@ -17,9 +17,9 @@ class MustangConfigBuilder implements Builder {
 
   @override
   Map<String, List<String>> get buildExtensions {
-    dynamic mustantStateConfig = Utils.getMustantStateConfig();
-    if (mustantStateConfig != null) {
-      String modelName = mustantStateConfig[className];
+    dynamic mustangStateConfig = Utils.getMustangStateConfig();
+    if (mustangStateConfig != null) {
+      String modelName = mustangStateConfig[className];
       configFile = '${Utils.class2File(modelName)}.dart';
     } else {
       throw InvalidGenerationSourceError(
@@ -42,10 +42,10 @@ class MustangConfigBuilder implements Builder {
     String pkgName = buildStep.inputId.package;
     AssetId outFile = AssetId(pkgName, '$configPath/$configFile');
 
-    dynamic mustantStateConfig = Utils.getMustantStateConfig();
-    if (mustantStateConfig != null) {
-      modelName = mustantStateConfig[className];
-      for (dynamic element in mustantStateConfig[fields]) {
+    dynamic mustangStateConfig = Utils.getMustangStateConfig();
+    if (mustangStateConfig != null) {
+      modelName = mustangStateConfig[className];
+      for (dynamic element in mustangStateConfig[fields]) {
         if (element != null) {
           modelFieldsList.add(element);
         } else {

@@ -12,7 +12,7 @@ class Utils {
   static const String configFile = 'mustang.yaml';
 
   // Keys in mustang-cli.yaml
-  static const String mustantStateConfigKey = 'mustantStateConfig';
+  static const String mustangStateConfigKey = 'mustangStateConfig';
   static const String serializerKey = 'serializer';
   static const String screenKey = 'screen';
   static const String screenImportsKey = 'imports';
@@ -119,12 +119,12 @@ class Utils {
     return null;
   }
 
-  static dynamic getMustantStateConfig() {
+  static dynamic getMustangStateConfig() {
     String configFilePath = p.join(p.current, configFile);
 
     dynamic yamlConfig = getYamlConfig(configFilePath);
-    if (yamlConfig[mustantStateConfigKey] != null) {
-      return yamlConfig[mustantStateConfigKey];
+    if (yamlConfig[mustangStateConfigKey] != null) {
+      return yamlConfig[mustangStateConfigKey];
     }
     return null;
   }
