@@ -1,4 +1,11 @@
 builders:
+  app_congig_builder:
+    import: 'package:mustang_codegen/builder.dart'
+    builder_factories: [ 'mustangConfigBuilder' ]
+    build_extensions: { '.dart': [ '.conf.dart' ] }
+    auto_apply: root_package
+    build_to: source
+    runs_before: [ 'mustang_codegen:model_builder' ]
   model_builder:
     import: 'package:mustang_codegen/builder.dart'
     builder_factories: [ 'appModelLibraryBuilder' ]
@@ -25,6 +32,7 @@ builders:
         include: [ '**/aspects/*.dart' ]
       }
     }
+ 
   app_serializer_builder:
     import: 'package:mustang_codegen/builder.dart'
     builder_factories: [ 'appSerializerBuilder' ]
@@ -46,6 +54,7 @@ builders:
         include: [ '**/models/*.model.dart', '**/models/serializers.dart' ]
       }
     }
+
   screen_builder:
     import: 'package:mustang_codegen/builder.dart'
     builder_factories: [ 'screenLibraryBuilder' ]

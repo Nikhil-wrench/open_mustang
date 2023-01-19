@@ -1,5 +1,6 @@
 import 'package:build/build.dart';
 import 'package:mustang_codegen/src/app_serializer_builder.dart';
+import 'package:mustang_codegen/src/mustang_config_builder.dart';
 import 'package:mustang_codegen/src/aspect_generator/app_aspect_generator.dart';
 import 'package:mustang_codegen/src/model_generator/app_model_generator.dart';
 import 'package:mustang_codegen/src/screen_generator/screen_generator.dart';
@@ -39,3 +40,6 @@ Builder screenLibraryBuilder(BuilderOptions options) => LibraryBuilder(
 
 /// Generates built_value serializer
 Builder appSerializerBuilder(BuilderOptions options) => AppSerializerBuilder();
+
+/// Generates globle config
+Builder mustangConfigBuilder(BuilderOptions options) => MustangConfigBuilder();
