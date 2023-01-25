@@ -176,3 +176,6 @@
 ## 1.1.14
 - Made mustang state object generation optional
 
+## 1.1.15
+- Bug fix - mustang.yaml should be optional
+

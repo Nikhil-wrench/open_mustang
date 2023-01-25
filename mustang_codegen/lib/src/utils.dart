@@ -123,7 +123,7 @@ class Utils {
     String configFilePath = p.join(p.current, configFile);
 
     dynamic yamlConfig = getYamlConfig(configFilePath);
-    if (yamlConfig[mustangStateConfigKey] != null) {
+    if (yamlConfig != null && yamlConfig[mustangStateConfigKey] != null) {
       return yamlConfig[mustangStateConfigKey];
     }
     return null;
@@ -133,7 +133,6 @@ class Utils {
     if (configFilePath.isNotEmpty && File(configFilePath).existsSync()) {
       File configFile = File(configFilePath);
       String rawConfig = configFile.readAsStringSync();
-
       return loadYaml(rawConfig);
     }
     return null;
