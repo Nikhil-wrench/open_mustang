@@ -113,7 +113,7 @@ class Utils {
     String configFilePath = p.join(p.current, configFile);
 
     dynamic yamlConfig = getYamlConfig(configFilePath);
-    if (yamlConfig[serializerKey] != null) {
+    if (yamlConfig != null && yamlConfig[serializerKey] != null) {
       return yamlConfig[serializerKey];
     }
     return null;

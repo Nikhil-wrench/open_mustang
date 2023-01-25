@@ -177,5 +177,7 @@
 - Made mustang state object generation optional
 
 ## 1.1.15
-- Bug fix - mustang.yaml should be optional
+- Bug fix - mustang.yaml should be optional for config builder
 
+## 1.1.16
+- Bug fix - mustang.yaml should be optional for serializer builder
