@@ -97,3 +97,6 @@
 
 ## 1.1.10
 - doc fix
+
+## 1.1.11
+- Updated README
