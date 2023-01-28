@@ -9,6 +9,7 @@ class AppSerializerBuilder implements Builder {
   static const String modelsPath = 'src/models';
   static const String serializerPath = 'lib/$modelsPath';
   static const String serializerFile = 'serializers.dart';
+  static const String mustangAppConfigModel = 'MustangAppConfig';
 
   @override
   Map<String, List<String>> get buildExtensions {
@@ -23,6 +24,11 @@ class AppSerializerBuilder implements Builder {
     final List<String> modelStrNames = [];
     final List<String> imports = [];
     final StringBuffer deserializerCases = StringBuffer();
+
+    // Default App config object
+    modelNames.add(mustangAppConfigModel);
+    modelStrNames.add("'\$$mustangAppConfigModel'");
+    imports.add("import 'package:mustang_core/mustang_core.dart';");
 
     await for (AssetId assetId
         in buildStep.findAssets(Glob('$serializerPath/*.model.dart'))) {
