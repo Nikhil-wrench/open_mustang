@@ -20,9 +20,6 @@ class MustangStore {
   // Flag to toggle persistence
   static bool _persistent = false;
 
-  /// Toggle debug mode
-  static bool debug = false;
-
   // Identifier for the persisted objects
   static String? _storeName;
 
@@ -50,7 +47,8 @@ class MustangStore {
       (_) => t as Object,
       ifAbsent: () => t as Object,
     );
-    if (debug) {
+
+    assert(() {
       postEvent('Mustang Store', {
         'persistentStoreName': _storeName,
         'persistentStoreLocation': _storeLocation,
@@ -58,7 +56,8 @@ class MustangStore {
         'persistentCacheStoreLocation': _storeLocation,
         'objects': _hashStore.length,
       });
-    }
+      return true;
+    }());
   }
 
   /// Saves objects [t], [s] of type [T] and [S] respectively.

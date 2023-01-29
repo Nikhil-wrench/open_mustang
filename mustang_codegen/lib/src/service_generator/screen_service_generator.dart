@@ -415,12 +415,12 @@ class ScreenServiceGenerator extends Generator {
   ) {
     if (customSerializerAlias.isNotEmpty) {
       return '''
-        jsonEncode($appSerializerAlias.serializerNames.contains('\$$type')
+        jsonDecode(jsonEncode($appSerializerAlias.serializerNames.contains('\$$type')
                   ? $appSerializerAlias.serializers.serialize(${type.toLowerCase()})
-                  : $customSerializerAlias.serializers.serialize(${type.toLowerCase()})))
+                  : $customSerializerAlias.serializers.serialize(${type.toLowerCase()}))))
     ''';
     } else {
-      return 'jsonEncode($appSerializerAlias.serializers.serialize(${type.toLowerCase()}))';
+      return 'jsonDecode(jsonEncode($appSerializerAlias.serializers.serialize(${type.toLowerCase()})))';
     }
   }
 
