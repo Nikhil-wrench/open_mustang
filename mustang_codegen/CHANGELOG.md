@@ -181,3 +181,8 @@
 
 ## 1.1.16
 - Bug fix - mustang.yaml should be optional for serializer builder
+
+## 1.1.17
+- Disabled config builders for now
+- `MustangAppConfig`, a model and event, is available for all applications by default
+

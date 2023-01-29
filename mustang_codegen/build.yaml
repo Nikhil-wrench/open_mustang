@@ -1,11 +1,11 @@
 builders:
-  mustang_config_builder:
-    import: 'package:mustang_codegen/builder.dart'
-    builder_factories: [ 'mustangConfigBuilder' ]
-    build_extensions: { '.yaml': [ '.dart' ] }
-    auto_apply: root_package
-    build_to: source
-    runs_before: [ 'mustang_codegen:model_builder' ]
+#  mustang_config_builder:
+#    import: 'package:mustang_codegen/builder.dart'
+#    builder_factories: [ 'mustangConfigBuilder' ]
+#    build_extensions: { '.yaml': [ '.dart' ] }
+#    auto_apply: root_package
+#    build_to: source
+#    runs_before: [ 'mustang_codegen:model_builder' ]
   model_builder:
     import: 'package:mustang_codegen/builder.dart'
     builder_factories: [ 'appModelLibraryBuilder' ]

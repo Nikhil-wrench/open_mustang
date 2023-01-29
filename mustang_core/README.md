@@ -21,7 +21,6 @@ A framework to build Flutter applications. Following features are available out 
 - [Aspects](#aspects)
 - [Project Structure](#project-structure)
 - [Quick Start](#quick-start)
-- [Configuration](#configuration)
 
 ### Framework Components
 - **Model** - A Dart class. All models as a whole represent the app state.
@@ -499,28 +498,3 @@ TODO
   
     ...  
   ```
-
-### Configuration
-
-Source templates that this tool generates can be customized using config file.
-
-- Create file name `mustang.yaml` in the root of the project directory
-- Config file format
-```yaml
-  # Default config object. This object can be used just like any other model, but it is auto-generated.
-  # If a Flutter application is built from multiple applications, this model acts as a thin glue containing shared
-  # state for all the applications.
-  mustangStateConfig:
-    # Name of the config class, can be anything
-    className: GlobalAppConfig
-    # Constraints on field type is same as that are applicable to Model fields
-    fields:
-      - name: notConnected
-        type: bool
-        defaultValue: false
-        serialize: false
-      - name: isSessionInvalid
-        type: bool
-        defaultValue: false
-        serialize: false
-```

@@ -76,7 +76,7 @@ class ScreenStateGenerator extends Generator {
           MustangRouteObserver.getInstance().subscribe(this, ModalRoute.of(context)!);
           if (kDebugMode) {
             postEvent('$stateName - ${Utils.debugObjectMutationEventKind}', {
-              'modelName': '\$$stateName', 
+              'model': '\$$stateName', 
               'modelStr': toJson(),
             });
           }
@@ -94,7 +94,7 @@ class ScreenStateGenerator extends Generator {
           MustangStore.update(this);
           if (kDebugMode) {
             postEvent('$stateName - ${Utils.debugObjectMutationEventKind}', {
-              'modelName': '\$$stateName', 
+              'model': '\$$stateName', 
               'modelStr': toJson(),
             });
           }

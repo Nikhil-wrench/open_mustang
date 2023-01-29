@@ -19,14 +19,37 @@ class _$MustangAppConfigSerializer
   @override
   Iterable<Object?> serialize(Serializers serializers, MustangAppConfig object,
       {FullType specifiedType = FullType.unspecified}) {
-    return <Object?>[];
+    final result = <Object?>[
+      'config',
+      serializers.serialize(object.config,
+          specifiedType: const FullType(BuiltMap,
+              const [const FullType(String), const FullType(Object)])),
+    ];
+
+    return result;
   }
 
   @override
   MustangAppConfig deserialize(
       Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    return new MustangAppConfigBuilder().build();
+    final result = new MustangAppConfigBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'config':
+          result.config.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltMap,
+                  const [const FullType(String), const FullType(Object)]))!);
+          break;
+      }
+    }
+
+    return result.build();
   }
 }
 

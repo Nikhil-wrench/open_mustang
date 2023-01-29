@@ -19,7 +19,6 @@ abstract class MustangAppConfig
   factory MustangAppConfig([void Function(MustangAppConfigBuilder) updates]) =
       _$MustangAppConfig;
 
-  @BuiltValueField(serialize: false)
   BuiltMap<String, Object> get config;
 
   static Serializer<MustangAppConfig> get serializer =>
