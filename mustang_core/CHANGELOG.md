@@ -105,3 +105,6 @@
 - Deleted `mustang.yaml` file changes from README
 - `MustangAppConfig`, a model and event, is available for all applications by default
 - Better debugging data for models
+
+## 1.1.13
+- Adding missing export
