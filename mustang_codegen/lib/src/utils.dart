@@ -7,6 +7,9 @@ import 'package:yaml/yaml.dart';
 
 class Utils {
   static const String debugEventKind = 'mustang';
+  static const String debugObjectMutationEventKind = 'object:mutate';
+  static const String debugPersistObjectEventKind = 'object:persist';
+  static const String debugCacheObjectEventKind = 'object:cache';
 
   // mustang config file
   static const String configFile = 'mustang.yaml';

@@ -16,6 +16,7 @@ export 'src/annotations/state_model.dart';
 export 'src/annotations/wire_name_field.dart';
 export 'src/cache/mustang_cache.dart';
 export 'src/cache/wrench_cache.dart';
+export 'src/config/mustang_app_config.model.dart';
 export 'src/event_stream/event_stream.dart';
 export 'src/interfaces/aspect_impl.dart';
 export 'src/store/mustang_store.dart';

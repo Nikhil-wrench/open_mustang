@@ -4,6 +4,7 @@ import 'package:build/build.dart';
 import 'package:mustang_codegen/src/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
+// Unused for now
 class MustangConfigBuilder implements Builder {
   static const String modelsPath = 'src/models';
   static const String configPath = 'lib/$modelsPath';

@@ -100,3 +100,8 @@
 
 ## 1.1.11
 - Updated README
+
+## 1.1.12
+- Deleted `mustang.yaml` file changes from README
+- `MustangAppConfig`, a model and event, is available for all applications by default
+- Better debugging data for models

@@ -150,11 +150,18 @@ class ScreenServiceGenerator extends Generator {
           reload = true,
         }) {
           MustangStore.update(t);
-          ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
+          if (MustangStore.persistent) {
+            ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
+            if (kDebugMode) {
+              postEvent('$serviceName: ${Utils.debugPersistObjectEventKind}', {
+                'models': '\$T',
+              });
+            }
+          }
           if (kDebugMode) {
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$T',
-              'modelStr': ${_generateCacheObjectJsonArg('T', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$T',
+              'modelStr': ${_generateJsonObject('T', appSerializerAlias, customSerializerAlias)},
             });
           }
           if (reload) {
@@ -169,16 +176,23 @@ class ScreenServiceGenerator extends Generator {
           reload = true,
         }) {
           MustangStore.update2(t, s);
-          ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
-          ${_generatePersistObjectTemplate('S', appSerializerAlias, customSerializerAlias)}
+          if (MustangStore.persistent) {
+            ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
+            ${_generatePersistObjectTemplate('S', appSerializerAlias, customSerializerAlias)}
+            if (kDebugMode) {
+              postEvent('$serviceName: ${Utils.debugPersistObjectEventKind}', {
+                'models': '\$T, \$S',
+              });
+            }
+          }
           if (kDebugMode) {
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$T',
-              'modelStr': ${_generateCacheObjectJsonArg('T', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$T',
+              'modelStr': ${_generateJsonObject('T', appSerializerAlias, customSerializerAlias)},
             });
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$S',
-              'modelStr': ${_generateCacheObjectJsonArg('S', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$S',
+              'modelStr': ${_generateJsonObject('S', appSerializerAlias, customSerializerAlias)},
             });
           }
           if (reload) {
@@ -193,21 +207,28 @@ class ScreenServiceGenerator extends Generator {
           reload = true,
         }) {
           MustangStore.update3(t, s, u);
-          ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
-          ${_generatePersistObjectTemplate('S', appSerializerAlias, customSerializerAlias)}
-          ${_generatePersistObjectTemplate('U', appSerializerAlias, customSerializerAlias)}
+          if (MustangStore.persistent) {
+            ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
+            ${_generatePersistObjectTemplate('S', appSerializerAlias, customSerializerAlias)}
+            ${_generatePersistObjectTemplate('U', appSerializerAlias, customSerializerAlias)}
+            if (kDebugMode) {
+              postEvent('$serviceName: ${Utils.debugPersistObjectEventKind}', {
+                'models': '\$T, \$S, \$U',
+              });
+            }
+          }
           if (kDebugMode) {
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$T',
-              'modelStr': ${_generateCacheObjectJsonArg('T', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$T',
+              'modelStr': ${_generateJsonObject('T', appSerializerAlias, customSerializerAlias)},
             });
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$S',
-              'modelStr': ${_generateCacheObjectJsonArg('S', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$S',
+              'modelStr': ${_generateJsonObject('S', appSerializerAlias, customSerializerAlias)},
             });
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$U',
-              'modelStr': ${_generateCacheObjectJsonArg('U', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$U',
+              'modelStr': ${_generateJsonObject('U', appSerializerAlias, customSerializerAlias)},
             });
           }
           if (reload) {
@@ -222,26 +243,33 @@ class ScreenServiceGenerator extends Generator {
           reload = true,
         }) {
           MustangStore.update4(t, s, u, v);
-          ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
-          ${_generatePersistObjectTemplate('S', appSerializerAlias, customSerializerAlias)}
-          ${_generatePersistObjectTemplate('U', appSerializerAlias, customSerializerAlias)}
-          ${_generatePersistObjectTemplate('V', appSerializerAlias, customSerializerAlias)}
+          if (MustangStore.persistent) {
+            ${_generatePersistObjectTemplate('T', appSerializerAlias, customSerializerAlias)}
+            ${_generatePersistObjectTemplate('S', appSerializerAlias, customSerializerAlias)}
+            ${_generatePersistObjectTemplate('U', appSerializerAlias, customSerializerAlias)}
+            ${_generatePersistObjectTemplate('V', appSerializerAlias, customSerializerAlias)}
+            if (kDebugMode) {
+              postEvent('$serviceName: ${Utils.debugPersistObjectEventKind}', {
+                'models': '\$T, \$S, \$U, \$V',
+              });
+            }
+          }
           if (kDebugMode) {
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$T',
-              'modelStr': ${_generateCacheObjectJsonArg('T', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$T',
+              'modelStr': ${_generateJsonObject('T', appSerializerAlias, customSerializerAlias)},
             });
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$S',
-              'modelStr': ${_generateCacheObjectJsonArg('S', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$S',
+              'modelStr': ${_generateJsonObject('S', appSerializerAlias, customSerializerAlias)},
             });
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$U',
-              'modelStr': ${_generateCacheObjectJsonArg('U', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$U',
+              'modelStr': ${_generateJsonObject('U', appSerializerAlias, customSerializerAlias)},
             });
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$V',
-              'modelStr': ${_generateCacheObjectJsonArg('V', appSerializerAlias, customSerializerAlias)},
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$V',
+              'modelStr': ${_generateJsonObject('V', appSerializerAlias, customSerializerAlias)},
             });
           }
           if (reload) {
@@ -261,9 +289,9 @@ class ScreenServiceGenerator extends Generator {
             screenStateCache = _\$${screenState}Cache(t);
             MustangStore.update(screenStateCache);
             if (kDebugMode) {
-              postEvent('${Utils.debugEventKind}', {
-                'modelName': '\${_\$${screenState}Cache}',
-                'modelStr': jsonEncode(screenStateCache.toJson()),
+              postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+                'model': '\${_\$${screenState}Cache}',
+                'modelStr': screenStateCache.toJson(),
               });
             }
           }
@@ -275,8 +303,8 @@ class ScreenServiceGenerator extends Generator {
         }) {
           MustangStore.delete<_\$${screenState}Cache>();
           if (kDebugMode) {
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\${_\$${screenState}Cache}',
+            postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
+              'model': '\${_\$${screenState}Cache}',
               'modelStr': '{}',
             });
           }
@@ -289,6 +317,11 @@ class ScreenServiceGenerator extends Generator {
         }
         
         Future<void> addObjectToCache<T>(String key, T t) async {
+          if (kDebugMode) {
+            postEvent('$serviceName: ${Utils.debugCacheObjectEventKind}', {
+                'model': '\$T',
+            });
+          }
           await MustangCache.addObject(
             key,
             '\$T',
@@ -312,20 +345,24 @@ class ScreenServiceGenerator extends Generator {
     List<String> appEventModels,
     List<String> stateFieldsTypes,
   ) {
+    String instanceCheckStr = '';
     if (appEventModels.isEmpty) {
-      return '';
+      instanceCheckStr += '''
+      if (event is MustangAppConfig) {
+          updateState1(event);
+      }
+      ''';
     }
 
-    String instanceCheckStr = '';
     for (String appEventModel in appEventModels) {
       String modelName = appEventModel.replaceFirst('\$', '');
       instanceCheckStr += '''
         if (event is $modelName) {
-          $modelName m = event;
-          updateState1(m);
+          updateState1(event);
         }
       ''';
     }
+
     return '''
       Stream<AppEvent> appEventStream = await EventStream.getStream();
       await for (AppEvent event in appEventStream) {
@@ -368,6 +405,22 @@ class ScreenServiceGenerator extends Generator {
     ''';
     } else {
       return '''jsonEncode($appSerializerAlias.serializers.serialize(${type.toLowerCase()}))''';
+    }
+  }
+
+  String _generateJsonObject(
+    String type,
+    String appSerializerAlias,
+    String customSerializerAlias,
+  ) {
+    if (customSerializerAlias.isNotEmpty) {
+      return '''
+        jsonDecode(jsonEncode($appSerializerAlias.serializerNames.contains('\$$type')
+                  ? $appSerializerAlias.serializers.serialize(${type.toLowerCase()})
+                  : $customSerializerAlias.serializers.serialize(${type.toLowerCase()}))))
+    ''';
+    } else {
+      return 'jsonDecode(jsonEncode($appSerializerAlias.serializers.serialize(${type.toLowerCase()})))';
     }
   }
 

@@ -66,16 +66,18 @@ class ScreenStateGenerator extends Generator {
       
       class $stateName extends ChangeNotifier implements RouteAware {
         late final BuildContext context;
+        late String status;
         
         $stateName({
           required this.context,
         }) {
+          status = 'active';
           MustangStore.update(this);
           MustangRouteObserver.getInstance().subscribe(this, ModalRoute.of(context)!);
           if (kDebugMode) {
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$$stateName', 
-              'modelStr': jsonEncode({'status': 'active'}),
+            postEvent('$stateName - ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$$stateName', 
+              'modelStr': toJson(),
             });
           }
         }
@@ -88,10 +90,12 @@ class ScreenStateGenerator extends Generator {
         
         @override
         void dispose() {
+          status = 'disposed';
+          MustangStore.update(this);
           if (kDebugMode) {
-            postEvent('${Utils.debugEventKind}', {
-              'modelName': '\$$stateName', 
-              'modelStr': jsonEncode({'status': 'disposed'}),
+            postEvent('$stateName - ${Utils.debugObjectMutationEventKind}', {
+              'model': '\$$stateName', 
+              'modelStr': toJson(),
             });
           }
           super.dispose();
@@ -125,6 +129,12 @@ class ScreenStateGenerator extends Generator {
         @override
         void didPushNext() {
           // TODO: implement didPushNext
+        }
+        
+        Map<String, dynamic> toJson() {
+          return {
+            'status': status,
+          };
         }
       }
     ''';

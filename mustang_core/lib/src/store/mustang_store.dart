@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:hive/hive.dart';
 import 'package:mustang_core/src/cache/mustang_cache.dart';
@@ -11,7 +12,7 @@ import 'package:mustang_core/src/cache/mustang_cache.dart';
 /// the existing object
 class MustangStore {
   // Underlying data structure for the objects in the store
-  static final HashMap<String, Object?> _hashStore = HashMap();
+  static final HashMap<String, Object> _hashStore = HashMap();
 
   static const String _nullTypeError =
       'Mustang store accepts only non-nullable types';
@@ -22,24 +23,41 @@ class MustangStore {
   // Identifier for the persisted objects
   static String? _storeName;
 
+  // Identifier for the cached objects
+  static String? _cacheStoreName;
+
+  // File system path for persisted and cached objects
+  static String? _storeLocation;
+
   /// Looks up for an object of type [T].
   /// Returns null if the object is not found.
   static T? get<T>() {
-    return _hashStore[T.toString()] as T?;
+    if (_hashStore.containsKey('$T')) {
+      return _hashStore['$T']! as T;
+    }
+    return null;
   }
 
   /// Saves an object [t] of type [T].
   /// If the object of the same type exists, it will be replaced.
   static void update<T>(T t) {
-    assert(
-      !(T.toString().endsWith('?')),
-      _nullTypeError,
-    );
+    assert(!('$T'.endsWith('?')), _nullTypeError);
     _hashStore.update(
       T.toString(),
-      (_) => t,
-      ifAbsent: () => t,
+      (_) => t as Object,
+      ifAbsent: () => t as Object,
     );
+
+    assert(() {
+      postEvent('Mustang Store', {
+        'persistentStoreName': _storeName,
+        'persistentStoreLocation': _storeLocation,
+        'persistentCacheStore': _cacheStoreName,
+        'persistentCacheStoreLocation': _storeLocation,
+        'objects': _hashStore.length,
+      });
+      return true;
+    }());
   }
 
   /// Saves objects [t], [s] of type [T] and [S] respectively.
@@ -126,6 +144,8 @@ class MustangStore {
       String storeName, String? storeLocation) async {
     _persistent = true;
     _storeName = storeName;
+    _cacheStoreName = '${storeName}Cache';
+    _storeLocation = storeLocation;
 
     if (storeLocation != null) {
       Hive.init(storeLocation);
@@ -133,7 +153,7 @@ class MustangStore {
     await Hive.openBox(_storeName!);
 
     // Config cache when persistence is in use
-    await MustangCache.initCache('${_storeName}Cache', storeLocation);
+    await MustangCache.initCache(_cacheStoreName!, storeLocation);
   }
 
   /// Creates a directory on the disk to save stringified objects.
@@ -148,7 +168,7 @@ class MustangStore {
       await Hive.openBox(_storeName!);
 
       // Config cache when persistence is in use
-      await MustangCache.initCache('${_storeName}Cache', storeLocation);
+      await MustangCache.initCache(_cacheStoreName!, storeLocation);
     }
   }
 
@@ -185,4 +205,7 @@ class MustangStore {
       }
     }
   }
+
+  /// Returns persistence status of the store
+  static bool get persistent => _persistent;
 }
