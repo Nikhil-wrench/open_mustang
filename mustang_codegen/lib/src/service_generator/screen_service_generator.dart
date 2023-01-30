@@ -417,7 +417,7 @@ class ScreenServiceGenerator extends Generator {
       return '''
         jsonDecode(jsonEncode($appSerializerAlias.serializerNames.contains('\$$type')
                   ? $appSerializerAlias.serializers.serialize(${type.toLowerCase()})
-                  : $customSerializerAlias.serializers.serialize(${type.toLowerCase()}))))
+                  : $customSerializerAlias.serializers.serialize(${type.toLowerCase()})))
     ''';
     } else {
       return 'jsonDecode(jsonEncode($appSerializerAlias.serializers.serialize(${type.toLowerCase()})))';

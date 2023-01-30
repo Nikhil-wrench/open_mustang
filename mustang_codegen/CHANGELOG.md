@@ -186,3 +186,6 @@
 - Disabled config builders for now
 - `MustangAppConfig`, a model and event, is available for all applications by default
 
+## 1.1.18
+- Fixed issue with service generator
+
