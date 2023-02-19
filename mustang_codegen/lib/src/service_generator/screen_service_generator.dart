@@ -74,7 +74,8 @@ class ScreenServiceGenerator extends Generator {
     String customSerializer = '';
     String customSerializerAlias = '';
     if (customSerializerPackage != null) {
-      customSerializerAlias = Utils.generateRandomString(10);
+      AssetId assetId = AssetId.resolve(Uri.parse(customSerializerPackage));
+      customSerializerAlias = '${assetId.package}_serializer';
       customSerializer =
           "import '$customSerializerPackage' as $customSerializerAlias;";
     }

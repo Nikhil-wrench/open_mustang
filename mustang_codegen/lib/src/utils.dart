@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:path/path.dart' as p;
@@ -185,13 +184,5 @@ class Utils {
     return methodWithArguments;
   }
 
-  static String generateRandomString(int len) {
-    Random random = Random();
-    const chars = 'abcdefghijklmnopqrstuvwxyz';
-    return List.generate(len, (index) => chars[random.nextInt(chars.length)])
-        .join();
-  }
-
-  static String defaultGeneratorComment =
-      '// GENERATED CODE - DO NOT MODIFY BY HAND';
+  static String defaultGeneratorComment = '// GENERATED CODE - DO NOT MODIFY';
 }

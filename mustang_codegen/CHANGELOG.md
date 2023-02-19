@@ -189,3 +189,5 @@
 ## 1.1.18
 - Fixed issue with service generator
 
+## 1.1.19
+- Predictable customer serializer alias in the generated service file
