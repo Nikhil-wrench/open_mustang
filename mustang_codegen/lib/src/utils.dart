@@ -13,7 +13,7 @@ class Utils {
   // mustang config file
   static const String configFile = 'mustang.yaml';
 
-  // Keys in mustang-cli.yaml
+  // Keys in mustang.yaml
   static const String mustangStateConfigKey = 'mustangStateConfig';
   static const String serializerKey = 'serializer';
   static const String screenKey = 'screen';
@@ -75,8 +75,11 @@ class Utils {
         pkgName.split('_').map((e) => capitalizeFirst(e)).toList().join(''));
   }
 
-  static List<String> getImports(
-      List<LibraryImportElement> elements, String package) {
+  static String getImportFromPath(String package, String path) {
+    return "import 'package:$package/${path.replaceAll('lib/', '')}';";
+  }
+
+  static List<String> getImports(List<LibraryImportElement> elements) {
     List<String> importsList = [];
     for (LibraryImportElement importElement in elements) {
       String importedLib =
@@ -112,9 +115,7 @@ class Utils {
   }
 
   static String? getCustomSerializerPackage() {
-    String configFilePath = p.join(p.current, configFile);
-
-    dynamic yamlConfig = getYamlConfig(configFilePath);
+    dynamic yamlConfig = getYamlConfig();
     if (yamlConfig != null && yamlConfig[serializerKey] != null) {
       return yamlConfig[serializerKey];
     }
@@ -122,16 +123,15 @@ class Utils {
   }
 
   static dynamic getMustangStateConfig() {
-    String configFilePath = p.join(p.current, configFile);
-
-    dynamic yamlConfig = getYamlConfig(configFilePath);
+    dynamic yamlConfig = getYamlConfig();
     if (yamlConfig != null && yamlConfig[mustangStateConfigKey] != null) {
       return yamlConfig[mustangStateConfigKey];
     }
     return null;
   }
 
-  static dynamic getYamlConfig(String configFilePath) {
+  static dynamic getYamlConfig() {
+    String configFilePath = p.join(p.current, configFile);
     if (configFilePath.isNotEmpty && File(configFilePath).existsSync()) {
       File configFile = File(configFilePath);
       String rawConfig = configFile.readAsStringSync();

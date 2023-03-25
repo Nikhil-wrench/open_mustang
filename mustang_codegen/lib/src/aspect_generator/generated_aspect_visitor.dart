@@ -2,7 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:mustang_codegen/src/codegen_constants.dart';
 
-/// Visits an generated aspect file and finds all parameters
+/// Visits a generated aspect file and finds all parameters
 /// for an aspect
 class GeneratedAspectVisitor extends SimpleElementVisitor<void> {
   const GeneratedAspectVisitor(

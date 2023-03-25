@@ -47,14 +47,11 @@ class ScreenStateGenerator extends Generator {
           '$fieldType get $fieldName => MustangStore.get<$fieldType>() ?? $fieldType();';
       stateModelFields.add(declaration);
     }
-    List<String> stateImports = Utils.getImports(
-      element.library.libraryImports,
-      buildStep.inputId.package,
-    );
+    List<String> stateImports =
+        Utils.getImports(element.library.libraryImports);
 
     return '''
       import 'dart:async';
-      import 'dart:convert';
       import 'dart:developer';
       import 'package:flutter/foundation.dart';
       import 'package:flutter/widgets.dart';

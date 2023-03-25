@@ -59,10 +59,8 @@ class AppModelGenerator extends Generator {
     String appModelFilename = '${Utils.class2File(appModelName)}.model';
     String appModelVarName = Utils.class2Var(appModelName);
 
-    List<String> modelImports = Utils.getImports(
-      element.library.libraryImports,
-      buildStep.inputId.package,
-    );
+    List<String> modelImports =
+        Utils.getImports(element.library.libraryImports);
 
     List<String> appEventImports = [];
     if (isAppEvent) {

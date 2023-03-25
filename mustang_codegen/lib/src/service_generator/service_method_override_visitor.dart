@@ -8,9 +8,9 @@ import 'package:mustang_codegen/src/utils.dart';
 import 'package:mustang_core/mustang_core.dart';
 import 'package:source_gen/source_gen.dart';
 
-/// Visits all the methods of a service and generates appropriate code
-/// for overriding parent methods. This visitor is called in
-/// [ScreenServiceGenerator] to override methods that are annotated
+/// Parses all the methods of a service and service extension files
+/// looking for annotations, @Around, and generate appropriate code. This visitor
+/// is called from [ScreenServiceGenerator]
 class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
   ServiceMethodOverrideVisitor({
     required this.overrides,

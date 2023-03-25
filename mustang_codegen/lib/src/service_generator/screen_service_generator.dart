@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
+import 'package:mustang_codegen/src/codegen_constants.dart';
 import 'package:mustang_codegen/src/service_generator/service_method_override_visitor.dart';
 import 'package:mustang_codegen/src/utils.dart';
 import 'package:mustang_core/mustang_core.dart';
@@ -33,7 +34,7 @@ class ScreenServiceGenerator extends Generator {
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
-    _validate(element, annotation);
+    _validate(element);
 
     String serviceName = element.displayName;
     String generatedServiceName = element.displayName.replaceFirst(r'$', '');
@@ -52,6 +53,24 @@ class ScreenServiceGenerator extends Generator {
         imports: imports,
       ),
     );
+
+    // parse additional screen services
+    List<String> additionalServiceNames = [];
+    List<String> serviceFilePathSegments = buildStep.inputId.pathSegments;
+    serviceFilePathSegments.removeLast();
+    await for (AssetId assetId in buildStep.findAssets(Glob(
+        '${p.joinAll(serviceFilePathSegments)}/${CodeGenConstants.extendedServicesDir}/*_service.dart'))) {
+      LibraryElement library = await buildStep.resolver.libraryFor(assetId);
+      String additionalServiceName = library.topLevelElements.first.displayName;
+      additionalServiceNames.add(additionalServiceName);
+      _validate(library.topLevelElements.first);
+      imports.add(Utils.getImportFromPath(assetId.package, assetId.path));
+      library.topLevelElements.first.visitChildren(ServiceMethodOverrideVisitor(
+        overrides: overriders,
+        imports: imports,
+      ));
+    }
+
     imports.add(
         "import '${Utils.serviceClassToGenStateFile(generatedServiceName)}';");
     imports = imports.toSet().toList();
@@ -138,8 +157,10 @@ class ScreenServiceGenerator extends Generator {
         
         ${overriders.join('\n')}
       }
+      
+      ${_generateServiceExtensions(additionalServiceNames, serviceName)}
         
-      extension \$$serviceName on $serviceName {
+      class _${serviceName}Utils {
         void updateState() {
           $screenState? screenState = MustangStore.get<$screenState>();
           if (screenState != null) {
@@ -337,8 +358,7 @@ class ScreenServiceGenerator extends Generator {
         bool itemExistsInCache(String key) {
           return MustangCache.itemExists(key);
         }
-  
-    }
+      }
     ''';
   }
 
@@ -425,7 +445,7 @@ class ScreenServiceGenerator extends Generator {
     }
   }
 
-  void _validate(Element element, ConstantReader annotation) {
+  void _validate(Element element) {
     if (!element.displayName.startsWith(r'$')) {
       throw InvalidGenerationSourceError(
           'ScreenService class name should start with \$',
@@ -456,5 +476,70 @@ class ScreenServiceGenerator extends Generator {
 
   bool _stateHasAppEvent(String appEvent, List<String> stateFieldsTypes) {
     return stateFieldsTypes.contains(appEvent);
+  }
+
+  String _generateServiceExtensions(
+    List<String> serviceNames,
+    String screenService,
+  ) {
+    String out = '';
+    serviceNames.add(screenService);
+    for (String serviceName in serviceNames) {
+      String utilClass = '_${screenService}Utils';
+      out += '''\n\n
+      extension \$$serviceName on $serviceName {
+        void updateState() {
+          $utilClass().updateState();
+        }
+        
+        void updateState1<T>(T t, {
+          reload = true,
+        }) {
+          $utilClass().updateState1(t, reload: reload);
+        }
+    
+        void updateState2<T, S>(T t, S s, {
+          reload = true,
+        }) {
+          $utilClass().updateState2(t, s, reload: reload);
+        }
+    
+        void updateState3<T, S, U>(T t, S s, U u, {
+          reload = true,
+        }) {
+          $utilClass().updateState3(t, s, u, reload: reload);
+        }
+    
+        void updateState4<T, S, U, V>(T t, S s, U u, V v, {
+          reload = true,
+        }) {
+          $utilClass().updateState4(t, s, u, v, reload: reload);
+        }
+        
+        T memoizeScreen<T>(T Function() service) {
+          return $utilClass().memoizeScreen(service);
+        }
+        
+        void clearMemoizedScreen({
+          reload = true,
+        }) {
+          $utilClass().clearMemoizedScreen(reload: reload);    
+        }
+        
+        Future<void> addObjectToCache<T>(String key, T t) async {
+          await $utilClass().addObjectToCache(key, t);
+        }
+        
+        Future<void> deleteObjectsFromCache(String key) async {
+          await $utilClass().deleteObjectsFromCache(key);
+        }
+        
+        bool itemExistsInCache(String key) {
+          return $utilClass().itemExistsInCache(key); 
+        }
+      }
+    ''';
+    }
+    return out;
   }
 }
