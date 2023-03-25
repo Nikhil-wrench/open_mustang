@@ -191,3 +191,7 @@
 
 ## 1.1.19
 - Predictable customer serializer alias in the generated service file
+
+## 1.1.20
+- Added support for extended screen service files
+
