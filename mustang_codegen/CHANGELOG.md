@@ -195,3 +195,5 @@
 ## 1.1.20
 - Added support for extended screen service files
 
+## 1.1.21
+- Fix - Incorrect regex while parsing model files in Flutter version >= 3.3.0
