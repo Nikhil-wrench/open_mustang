@@ -269,10 +269,10 @@ packages:
     dependency: "direct main"
     description:
       name: mustang_core
-      sha256: e295797d12d6317e78bf4456e81ef2dce647b852ee43d8fdd7ae855c065101bd
+      sha256: "75d7b7481e3152af4b26b193ddbfa8fa6da3d9ae7e079d3c07455198e1a4f055"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.13"
+    version: "3.0.0"
   node_preamble:
     dependency: transitive
     description:
