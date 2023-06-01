@@ -35,8 +35,6 @@ class AppAspectGenerator extends Generator {
 
     String aspectName = element.displayName;
     String generatedAspectName = element.displayName.replaceFirst(r'$', '');
-    String generatedAspectNameWithLowerCase =
-        '${generatedAspectName[0].toLowerCase()}${generatedAspectName.substring(1)}';
     String importAspect = p.basenameWithoutExtension(buildStep.inputId.path);
 
     String pkgName = buildStep.inputId.package;
@@ -68,7 +66,6 @@ class AppAspectGenerator extends Generator {
     imports = imports.toSet().toList();
 
     return '''   
-      import 'package:mustang_core/mustang_core.dart';
       import 'package:$pkgName/src/aspects/$importAspect.dart';
       
       ${imports.join('\n')}
@@ -76,12 +73,6 @@ class AppAspectGenerator extends Generator {
       class \$\$$generatedAspectName extends $aspectName {        
         ${invokeHooks.join('')}
       }
-      
-      class $generatedAspectName implements AspectImpl {
-        const $generatedAspectName();
-      }
-      
-      const $generatedAspectNameWithLowerCase = $generatedAspectName();
     ''';
   }
 

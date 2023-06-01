@@ -197,3 +197,6 @@
 
 ## 1.1.21
 - Fix - Incorrect regex while parsing model files in Flutter version >= 3.3.0
+
+## 3.0.0
+- Support for Dart 3

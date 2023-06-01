@@ -2,7 +2,7 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/element/visitor.dart';
-import 'package:mustang_codegen/src/aspect_generator/generated_aspect_visitor.dart';
+import 'package:mustang_codegen/src/aspect_generator/aspect_visitor.dart';
 import 'package:mustang_codegen/src/codegen_constants.dart';
 import 'package:mustang_codegen/src/utils.dart';
 import 'package:mustang_core/mustang_core.dart';
@@ -15,10 +15,12 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
   ServiceMethodOverrideVisitor({
     required this.overrides,
     required this.imports,
+    required this.aspectLibraries,
   });
 
   List<String> overrides;
   List<String> imports;
+  List<LibraryElement> aspectLibraries;
 
   @override
   void visitMethodElement(MethodElement element) {
@@ -35,30 +37,39 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
 
       final DartObject? beforeAnnotationObject =
           TypeChecker.fromRuntime(Before).firstAnnotationOfExact(element);
-      _generateBeforeHooks(
-        element,
-        beforeAnnotationObject,
-        beforeHooks,
-        imports,
-      );
+      if (beforeAnnotationObject != null) {
+        _generateBeforeHooks(
+          element,
+          beforeAnnotationObject,
+          beforeHooks,
+          imports,
+          aspectLibraries,
+        );
+      }
 
       final DartObject? afterAnnotationObject =
           TypeChecker.fromRuntime(After).firstAnnotationOfExact(element);
-      _generateAfterHooks(
-        element,
-        afterAnnotationObject,
-        afterHooks,
-        imports,
-      );
+      if (afterAnnotationObject != null) {
+        _generateAfterHooks(
+          element,
+          afterAnnotationObject,
+          afterHooks,
+          imports,
+          aspectLibraries,
+        );
+      }
 
       final DartObject? aroundAnnotationObject =
           TypeChecker.fromRuntime(Around).firstAnnotationOfExact(element);
-      _generateAroundHooks(
-        element,
-        aroundAnnotationObject,
-        aroundHooks,
-        imports,
-      );
+      if (aroundAnnotationObject != null) {
+        _generateAroundHooks(
+          element,
+          aroundAnnotationObject,
+          aroundHooks,
+          imports,
+          aspectLibraries,
+        );
+      }
 
       if (beforeAnnotationObject != null ||
           afterAnnotationObject != null ||
@@ -89,149 +100,176 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
 
   void _generateBeforeHooks(
     MethodElement element,
-    DartObject? beforeAnnotationObject,
+    DartObject beforeAnnotationObject,
     List<String> beforeHooks,
     List<String> imports,
+    List<LibraryElement> aspectLibraries,
   ) {
-    if (beforeAnnotationObject != null) {
-      List<DartObject> aspects =
-          beforeAnnotationObject.getField('aspects')?.toListValue() ?? [];
-      Map<DartObject?, DartObject?> args =
-          beforeAnnotationObject.getField('args')!.toMapValue()!;
-      Map<String, dynamic> argsMap = {};
-      for (var e in args.entries) {
-        argsMap["'${e.key!.toStringValue()!}'"] = _getTypeValue(e.value);
+    Map<DartObject?, DartObject?> args =
+        beforeAnnotationObject.getField('args')!.toMapValue()!;
+    Map<String, dynamic> argsMap = {};
+    for (var e in args.entries) {
+      argsMap["'${e.key!.toStringValue()!}'"] = _getTypeValue(e.value);
+    }
+
+    List<DartObject> aspects =
+        beforeAnnotationObject.getField('aspects')?.toListValue() ?? [];
+
+    if (aspects.isEmpty) {
+      throw InvalidGenerationSourceError(
+        'Error: No before aspects found or failed to resolve aspect(s) type',
+        element: element,
+      );
+    }
+
+    for (DartObject aspect in aspects) {
+      Iterable<LibraryElement> matchedAspects = aspectLibraries.where(
+        (element) =>
+            element.topLevelElements.first.name == aspect.toStringValue(),
+      );
+
+      if (matchedAspects.isEmpty) {
+        throw InvalidGenerationSourceError(
+          'Error: Invalid aspect name',
+          element: element,
+        );
       }
-      // add validation for when its empty
-      if (aspects.isNotEmpty) {
-        for (DartObject aspect in aspects) {
-          if (aspect.type?.getDisplayString(withNullability: false) != null) {
-            List<ParameterElement> invokeParameters = [];
-            Element? aspectExtensionObject = aspect
-                .type?.element?.library?.topLevelElements
-                .firstWhere((element) => element.displayName.contains('\$\$'));
+      List<ParameterElement> invokeParameters = [];
+      Element aspectExtensionObject =
+          matchedAspects.first.topLevelElements.first;
+      aspectExtensionObject.visitChildren(AspectVisitor(invokeParameters));
 
-            aspectExtensionObject
-                ?.visitChildren(GeneratedAspectVisitor(invokeParameters));
-
-            _validateBeforeOrAfterAspectParameters(
-              element,
-              invokeParameters,
-              aspect.type,
-            );
-            String annotationImport =
-                aspect.type?.element?.location?.encoding ?? '';
-            if (annotationImport.isNotEmpty) {
-              annotationImport = annotationImport.split(';').first;
-              imports.add("import '$annotationImport';");
-            }
-            String methodName = CodeGenConstants.invoke;
-            String aspectName =
-                '\$\$${aspect.type?.getDisplayString(withNullability: false)}';
-            beforeHooks.add('''
+      _validateBeforeOrAfterAspectParameters(
+        element,
+        invokeParameters,
+        aspect.type,
+      );
+      String annotationImport =
+          aspectExtensionObject.librarySource!.uri.normalizePath().toString();
+      annotationImport = annotationImport.replaceFirst('.dart', '.aspect.dart');
+      if (annotationImport.isNotEmpty) {
+        annotationImport = annotationImport.split(';').first;
+        imports.add("import '$annotationImport';");
+      }
+      String methodName = CodeGenConstants.invoke;
+      String aspectName = '\$${aspect.toStringValue()}';
+      beforeHooks.add('''
               await $aspectName().$methodName($argsMap);
             ''');
-          }
-        }
-      }
     }
   }
 
   void _generateAfterHooks(
     MethodElement element,
-    DartObject? afterAnnotationObject,
+    DartObject afterAnnotationObject,
     List<String> afterHooks,
     List<String> imports,
+    List<LibraryElement> aspectLibraries,
   ) {
-    if (afterAnnotationObject != null) {
-      List<DartObject> aspects =
-          afterAnnotationObject.getField('aspects')?.toListValue() ?? [];
-      Map<DartObject?, DartObject?> args =
-          afterAnnotationObject.getField('args')!.toMapValue()!;
-      Map<String, dynamic> argsMap = {};
-      for (var e in args.entries) {
-        argsMap["'${e.key!.toStringValue()!}'"] = _getTypeValue(e.value);
+    Map<DartObject?, DartObject?> args =
+        afterAnnotationObject.getField('args')!.toMapValue()!;
+    Map<String, dynamic> argsMap = {};
+    for (var e in args.entries) {
+      argsMap["'${e.key!.toStringValue()!}'"] = _getTypeValue(e.value);
+    }
+
+    List<DartObject> aspects =
+        afterAnnotationObject.getField('aspects')?.toListValue() ?? [];
+    if (aspects.isEmpty) {
+      throw InvalidGenerationSourceError(
+        'Error: No after aspects found or failed to resolve aspect(s) type',
+        element: element,
+      );
+    }
+
+    for (DartObject aspect in aspects) {
+      Iterable<LibraryElement> matchedAspects = aspectLibraries.where(
+        (element) =>
+            element.topLevelElements.first.name == aspect.toStringValue(),
+      );
+
+      if (matchedAspects.isEmpty) {
+        throw InvalidGenerationSourceError(
+          'Error: Invalid aspect name',
+          element: element,
+        );
       }
-      // add validation for when its empty
-      if (aspects.isNotEmpty) {
-        for (DartObject aspect in aspects) {
-          if (aspect.type?.getDisplayString(withNullability: false) != null) {
-            List<ParameterElement> invokeParameters = [];
-            Element? aspectExtensionObject = aspect
-                .type?.element?.library?.topLevelElements
-                .firstWhere((element) => element.displayName.contains('\$\$'));
+      List<ParameterElement> invokeParameters = [];
+      Element aspectExtensionObject =
+          matchedAspects.first.topLevelElements.first;
+      aspectExtensionObject.visitChildren(AspectVisitor(invokeParameters));
 
-            aspectExtensionObject
-                ?.visitChildren(GeneratedAspectVisitor(invokeParameters));
-
-            _validateBeforeOrAfterAspectParameters(
-              element,
-              invokeParameters,
-              aspect.type,
-            );
-            String annotationImport =
-                aspect.type?.element?.location?.encoding ?? '';
-            if (annotationImport.isNotEmpty) {
-              annotationImport = annotationImport.split(';').first;
-              imports.add("import '$annotationImport';");
-            }
-            String methodName = CodeGenConstants.invoke;
-            String aspectName =
-                '\$\$${aspect.type?.getDisplayString(withNullability: false)}';
-            afterHooks.add('''
+      _validateBeforeOrAfterAspectParameters(
+        element,
+        invokeParameters,
+        aspect.type,
+      );
+      String annotationImport =
+          aspectExtensionObject.librarySource!.uri.normalizePath().toString();
+      annotationImport = annotationImport.replaceFirst('.dart', '.aspect.dart');
+      if (annotationImport.isNotEmpty) {
+        annotationImport = annotationImport.split(';').first;
+        imports.add("import '$annotationImport';");
+      }
+      String methodName = CodeGenConstants.invoke;
+      String aspectName = '\$${aspect.toStringValue()}';
+      afterHooks.add('''
               await $aspectName().$methodName($argsMap);
             ''');
-          }
-        }
-      }
     }
   }
 
   void _generateAroundHooks(
     MethodElement element,
-    DartObject? aroundAnnotationObject,
+    DartObject aroundAnnotationObject,
     List<String> aroundHooks,
     List<String> imports,
+    List<LibraryElement> aspectLibraries,
   ) {
-    if (aroundAnnotationObject != null) {
-      DartObject? aspect = aroundAnnotationObject.getField('aspect');
-      Map<DartObject?, DartObject?> args =
-          aroundAnnotationObject.getField('args')!.toMapValue()!;
-      Map<String, dynamic> argsMap = {};
-      for (var e in args.entries) {
-        argsMap["'${e.key!.toStringValue()!}'"] = _getTypeValue(e.value);
-      }
-      // add validation for when its empty
-      if (aspect != null) {
-        if (aspect.type?.getDisplayString(withNullability: false) != null) {
-          List<ParameterElement> invokeParameters = [];
-          Element? aspectExtensionObject = aspect
-              .type?.element?.library?.topLevelElements
-              .firstWhere((element) => element.displayName.contains('\$\$'));
+    Map<DartObject?, DartObject?> args =
+        aroundAnnotationObject.getField('args')!.toMapValue()!;
+    Map<String, dynamic> argsMap = {};
+    for (var e in args.entries) {
+      argsMap["'${e.key!.toStringValue()!}'"] = _getTypeValue(e.value);
+    }
 
-          aspectExtensionObject
-              ?.visitChildren(GeneratedAspectVisitor(invokeParameters));
+    DartObject? aspect = aroundAnnotationObject.getField('aspect');
+    if (aspect == null) {
+      throw InvalidGenerationSourceError(
+        'Error: Failed to around resolve aspect type',
+        element: element,
+      );
+    }
 
-          _validateAroundInvokeParameters(
-            element,
-            invokeParameters,
-          );
+    Iterable<LibraryElement> matchedAspects = aspectLibraries.where((element) =>
+        element.topLevelElements.first.name == aspect.toStringValue());
+    if (matchedAspects.isEmpty) {
+      throw InvalidGenerationSourceError(
+        'Error: Invalid aspect name',
+        element: element,
+      );
+    }
 
-          String annotationImport =
-              aspect.type?.element?.location?.encoding ?? '';
-          if (annotationImport.isNotEmpty) {
-            annotationImport = annotationImport.split(';').first;
-            imports.add("import '$annotationImport';");
-          }
-          String methodName = CodeGenConstants.invoke;
-          String aspectName =
-              '\$\$${aspect.type?.getDisplayString(withNullability: false)}';
-          aroundHooks.add('''
+    Element aspectExtensionObject = matchedAspects.first.topLevelElements.first;
+    List<ParameterElement> invokeParameters = [];
+    aspectExtensionObject.visitChildren(AspectVisitor(invokeParameters));
+    _validateAroundInvokeParameters(
+      element,
+      invokeParameters,
+    );
+
+    String annotationImport =
+        aspectExtensionObject.librarySource!.uri.normalizePath().toString();
+    annotationImport = annotationImport.replaceFirst('.dart', '.aspect.dart');
+    if (annotationImport.isNotEmpty) {
+      annotationImport = annotationImport.split(';').first;
+      imports.add("import '$annotationImport';");
+    }
+    String methodName = CodeGenConstants.invoke;
+    String aspectName = '\$${aspect.toStringValue()}';
+    aroundHooks.add('''
               $aspectName().$methodName($argsMap,
             ''');
-        }
-      }
-    }
   }
 
   String _nestAroundMethods(

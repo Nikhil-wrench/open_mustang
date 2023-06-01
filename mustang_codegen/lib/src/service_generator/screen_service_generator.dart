@@ -10,6 +10,8 @@ import 'package:source_gen/source_gen.dart';
 
 class ScreenServiceGenerator extends Generator {
   static const String appModelsDir = 'lib/src/models';
+  static const String appAspectsDir = 'lib/src/aspects';
+  static const String additionalServiceDir = '/ext/';
 
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
@@ -17,6 +19,13 @@ class ScreenServiceGenerator extends Generator {
         library.annotatedWith(const TypeChecker.fromRuntime(ScreenService));
     StringBuffer serviceBuffer = StringBuffer();
     if (services.isEmpty) {
+      return '$serviceBuffer';
+    }
+
+    // if the file is an additional service, skip processing
+    String serviceFilePath =
+        services.first.element.source?.uri.normalizePath().toString() ?? '';
+    if (serviceFilePath.contains(additionalServiceDir)) {
       return '$serviceBuffer';
     }
 
@@ -45,12 +54,21 @@ class ScreenServiceGenerator extends Generator {
       return '';
     }
 
+    // parse aspect files
+    List<LibraryElement> aspectLibraries = [];
+    await for (AssetId assetId
+        in buildStep.findAssets(Glob('$appAspectsDir/*_aspect.dart'))) {
+      LibraryElement library = await buildStep.resolver.libraryFor(assetId);
+      aspectLibraries.add(library);
+    }
+
     List<String> overriders = [];
     List<String> imports = [];
     element.visitChildren(
       ServiceMethodOverrideVisitor(
         overrides: overriders,
         imports: imports,
+        aspectLibraries: aspectLibraries,
       ),
     );
 
@@ -63,11 +81,12 @@ class ScreenServiceGenerator extends Generator {
       LibraryElement library = await buildStep.resolver.libraryFor(assetId);
       String additionalServiceName = library.topLevelElements.first.displayName;
       additionalServiceNames.add(additionalServiceName);
-      _validate(library.topLevelElements.first);
+      _validate(library.topLevelElements.first, isAdditionalService: true);
       imports.add(Utils.getImportFromPath(assetId.package, assetId.path));
       library.topLevelElements.first.visitChildren(ServiceMethodOverrideVisitor(
         overrides: overriders,
         imports: imports,
+        aspectLibraries: aspectLibraries,
       ));
     }
 
@@ -99,10 +118,10 @@ class ScreenServiceGenerator extends Generator {
           "import '$customSerializerPackage' as $customSerializerAlias;";
     }
 
-    List<String> appEventModels = [];
+    List<String> appEventModels = [CodeGenConstants.defaultMustangModel];
     List<String> appEventModelImports = [];
     await for (AssetId assetId
-        in buildStep.findAssets(Glob('$appModelsDir/!*.model*'))) {
+        in buildStep.findAssets(Glob('$appModelsDir/*[!.model.]*'))) {
       LibraryElement appModelLibrary =
           await buildStep.resolver.libraryFor(assetId);
       Iterable<AnnotatedElement> appEvents = LibraryReader(appModelLibrary)
@@ -367,13 +386,6 @@ class ScreenServiceGenerator extends Generator {
     List<String> stateFieldsTypes,
   ) {
     String instanceCheckStr = '';
-    if (appEventModels.isEmpty) {
-      instanceCheckStr += '''
-      if (event is MustangAppConfig) {
-          updateState1(event);
-      }
-      ''';
-    }
 
     for (String appEventModel in appEventModels) {
       String modelName = appEventModel.replaceFirst('\$', '');
@@ -445,7 +457,10 @@ class ScreenServiceGenerator extends Generator {
     }
   }
 
-  void _validate(Element element) {
+  void _validate(
+    Element element, {
+    bool isAdditionalService = false,
+  }) {
     if (!element.displayName.startsWith(r'$')) {
       throw InvalidGenerationSourceError(
           'ScreenService class name should start with \$',
@@ -464,13 +479,24 @@ class ScreenServiceGenerator extends Generator {
       );
     }
 
-    // class annotated with ScreenService should be abstract
-    ClassElement appServiceClass = element as ClassElement;
-    if (!appServiceClass.isAbstract) {
-      throw InvalidGenerationSourceError(
-          'Error: class annotated with ScreenService should be abstract',
-          todo: 'Make the class abstract',
-          element: element);
+    // class annotated with ScreenService should be abstract or mixin if
+    // the service is a mixin
+    if (isAdditionalService) {
+      bool isMixin = element is MixinElement;
+      if (!isMixin) {
+        throw InvalidGenerationSourceError(
+            'Error: additional screen services in ext folder should be mixin',
+            todo: 'Make additional services as mixin',
+            element: element);
+      }
+    } else {
+      ClassElement appServiceClass = element as ClassElement;
+      if (!appServiceClass.isAbstract) {
+        throw InvalidGenerationSourceError(
+            'Error: class annotated with ScreenService should be abstract',
+            todo: 'Make the class abstract ',
+            element: element);
+      }
     }
   }
 

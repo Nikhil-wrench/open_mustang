@@ -108,3 +108,7 @@
 
 ## 1.1.13
 - Adding missing export
+
+## 3.0.0
+- Support for Dart 3
+
