@@ -200,3 +200,7 @@
 
 ## 3.0.0
 - Support for Dart 3
+
+## 3.0.1
+- Bug fix - incorrect state disposal
+- Bug fix - model codegen fails when serialized annotation is false
