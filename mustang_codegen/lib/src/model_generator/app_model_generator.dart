@@ -280,7 +280,7 @@ class AppModelGenerator extends Generator {
     return appModelFields.map(
       (field) {
         String? builtValueFieldOptions;
-        if (field.serializeField != null && !field.serializeField!) {
+        if (field.serializeField != null) {
           builtValueFieldOptions = 'serialize: ${field.serializeField}';
         }
         if (field.wireName != null) {
@@ -288,7 +288,7 @@ class AppModelGenerator extends Generator {
           if (builtValueFieldOptions == null) {
             builtValueFieldOptions = wireNameArg;
           } else {
-            builtValueFieldOptions = ', $wireNameArg';
+            builtValueFieldOptions += ', $wireNameArg';
           }
         }
 

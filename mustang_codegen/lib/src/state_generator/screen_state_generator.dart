@@ -65,9 +65,17 @@ class ScreenStateGenerator extends Generator {
         late final BuildContext context;
         late String status;
         
-        $stateName({
-          required this.context,
+        factory $stateName({
+          required BuildContext context,
         }) {
+          $stateName? state = MustangStore.get<$stateName>();
+          if (state == null) {
+            return $stateName._internal(context);
+          }
+          return state;
+        }
+        
+        $stateName._internal(BuildContext context) {
           status = 'active';
           MustangStore.update(this);
           MustangRouteObserver.getInstance().subscribe(this, ModalRoute.of(context)!);
