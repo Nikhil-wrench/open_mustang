@@ -204,3 +204,6 @@
 ## 3.0.1
 - Bug fix - incorrect state disposal
 - Bug fix - model codegen fails when serialized annotation is false
+
+## 3.0.2
+- Bug fix - disposed state is added to the Mustang store on screen push

@@ -96,7 +96,8 @@ class ScreenStateGenerator extends Generator {
         @override
         void dispose() {
           status = 'disposed';
-          MustangStore.update(this);
+          MustangRouteObserver.getInstance().unsubscribe(this);
+          MustangStore.delete<$stateName>();
           if (kDebugMode) {
             postEvent('$stateName - ${Utils.debugObjectMutationEventKind}', {
               'model': '\$$stateName', 
@@ -109,11 +110,7 @@ class ScreenStateGenerator extends Generator {
         /// Called when the screen associated with this state has been popped off.
         @override
         void didPop() {
-          MustangRouteObserver.getInstance().unsubscribe(this);
-          MustangStore.delete<$stateName>();
-          Timer(const Duration(seconds: 1000), () {
-            dispose();
-          });
+          dispose();
         }
       
         /// Called when the top route has been popped off, and the screen associated with 
