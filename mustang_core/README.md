@@ -8,7 +8,7 @@ Mustang is an opinionated framework to build Flutter applications. It comes with
 - Event management
 
 Mustang expects project files to follow pre-defined conventions. [open_mustang_cli](https://pub.dev/packages/open_mustang_cli) assists in creating files
-as per the conventions.
+as per those conventions.
 
 ## Contents
 - [Framework Components](#framework-components)
@@ -25,20 +25,20 @@ as per the conventions.
 - [Quick Start](#quick-start)
 
 ### Framework Components
-- **Model** - *Models* defines data needed for a view.
+- **Model** - *Models* define data needed for a view.
 
 - **Screen** - *Screen* is a Flutter widget. *Screens* can be embedded in other screens.
 
 - **State** - *State* allows access to the specified models for the associated screen.
 
-- **Service** - Data fetching operations and business logic specific to the associated screen are defined in a service. 
+- **Service** - Data fetching operations and business logic specific to the associated screen are defined in a *Service*. 
 
 ### Component Communication
-- Every *Screen* is associated with a *Service* and a *State*
+- Every *Screen* is associated with a *Service* and a *State*.
 
     [<img src="https://github.com/getwrench/open_mustang/raw/master/mustang_core/01-components.png"/>](Architecture)
 
-Following steps outline the lifecycle of a screen
+Following steps outline the lifecycle of a *Screen*
 
 1. `Screen` reads `State` while building the UI
 2. `Screen` invokes methods in the `Service` as a response to user events (`scroll`, `tap` etc.)
@@ -51,8 +51,8 @@ Following steps outline the lifecycle of a screen
 
 ### Model
 - An abstract class annotated with `appModel`
-- Model name should start with `$`
-- Initialize fields with `InitField` annotation
+- Model name starts with `$`
+- Fields are initialized with `InitField` annotation
 - Methods/Getters/Setters are `NOT` supported inside `Model` classes
     
     ```dart
@@ -83,7 +83,7 @@ Following steps outline the lifecycle of a screen
   
 ### State
 - An abstract class annotated with `screenState`
-- State name should start with `$`
+- State name starts with `$`
 - Only *Models* are allowed as fields 
 
     ```dart      
@@ -97,7 +97,7 @@ Following steps outline the lifecycle of a screen
     
 ### Service
 - An abstract class annotated with `ScreenService`
-- Service name should start with `$`
+- Service name starts with `$`
   
     ```dart
     @screenService
@@ -109,7 +109,7 @@ Following steps outline the lifecycle of a screen
     }
     ```
     
-- Every service has access to the following important APIs
+- Every *Service* has access to the following APIs
     - `updateState` -  Updates models and triggers screen rebuild. To update the models without re-building the screen,
   set `reload` argument to `false`.
         - `updateState()`
@@ -149,7 +149,7 @@ Following steps outline the lifecycle of a screen
             ``` 
 
 ### Screen
-- `MustangScreen` widget should be the top-level widget for every screen
+- `MustangScreen` widget should be the top-level widget for every *Screen*
   
     ```dart
     Widget build(BuildContext context) {
@@ -178,8 +178,8 @@ Following steps outline the lifecycle of a screen
 
 [<img src="https://github.com/getwrench/open_mustang/raw/master/mustang_core/02-persistence.png"/>](Persistence)
 
-By default, *models* are saved only in the memory. When the app is terminated, models are lost
-permanently. There are cases where it is desirable to persist and restore these models across app restarts.
+By default, *Models* are saved only in the memory. When the app is terminated, models are lost
+permanently. In most cases, it is desirable to persist and restore these *Models* across app restarts.
 
 Following code snippet enables persistence for the app.
 
@@ -202,11 +202,12 @@ await MustangStore.restoreState(app_serializer.json2Type, app_serializer.seriali
 
 [<img src="https://github.com/getwrench/open_mustang/raw/master/mustang_core/03-cache.png"/>](Cache)
 
-`Cache` feature allows switching between instances of the same type on need basis.
+`Cache` allows switching between instances of the same type on need basis.
 
 `Persistence` creates snapshots of the *models* in the memory, to the disk. However, there are times when data
-need to be saved for later use and does not need to loaded into memory unless needed. An example would be a technician working on multiple jobs at the same time i.e, technician switches between jobs.
-Since the `MustangStore` allows only one instance of a *type*, there cannot be two instances of *Job* object in the memory.
+need to be saved for later use and does not need to loaded into memory unless needed. An example would be a technician 
+working on multiple jobs at the same time i.e, technician switches between jobs. Since the `MustangStore` allows only 
+one instance of a *type*, there cannot be two instances of *Job* object in the memory.
 
 Every *Service* instance has the following `Cache` related APIs
 
