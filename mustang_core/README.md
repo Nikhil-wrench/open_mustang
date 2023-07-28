@@ -421,19 +421,19 @@ Annotated a method with *@Around*
 
 - Update `pubspec.yaml`
   ```yaml
-    ...
+    # ...
     dependencies:
-      ...
+      # ...
       built_collection: ^5.1.1
-      built_value: ^8.1.3
-      mustang_core: ^1.1.2
-      mustang_widgets: ^1.0.2
+      built_value: ^8.6.0
+      mustang_core: ^3.0.0
+      mustang_widgets: ^3.0.0
       path_provider: ^2.0.6
 
     dev_dependencies:
-      ...
-      build_runner: ^2.1.4
-      mustang_codegen: ^1.1.4    
+      # ...
+      build_runner: ^2.4.4
+      mustang_codegen: ^3.0.0    
   ```
   
 - Install dependencies
@@ -455,61 +455,53 @@ Annotated a method with *@Around*
   ```dart
     @appModel 
     abstract class $Counter {
-      ...
-  
       @InitField(0)
       late int value;
     }
   ```
   
-- Update `counter_screen.dart` screen
-  ```dart
+  - Update `counter_screen.dart` screen
+    ```dart
     import 'package:flutter/material.dart';
+    import 'package:hello_mustang/src/screens/counter/widgets/greeting.dart';
     import 'package:mustang_widgets/mustang_widgets.dart';
     
     import 'counter_service.service.dart';
     import 'counter_state.state.dart';
-    
+
     class CounterScreen extends StatelessWidget {
-      const CounterScreen({
-        Key key,
-      }) : super(key: key);
-        
-      @override
-      Widget build(BuildContext context) {
-        return StateProvider<CounterState>(
-          state: CounterState(),
-          child: Builder(
-            builder: (BuildContext context) {
-              CounterState? state = StateConsumer<CounterState>().of(context);
-              return _body(state, context);
-            },
-          ),
-        );
-      }
+        const CounterScreen({
+          Key? key,
+        }) : super(key: key);
     
-      Widget _body(CounterState? state, BuildContext context) {
-        int counter = state?.counter?.value ?? 0;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Counter'),
-          ),
-          body: Center(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('$counter'),
+        @override
+        Widget build(BuildContext context) {
+          return MustangScreen<CounterState>(
+            state: CounterState(context: context),
+            builder: (BuildContext context, CounterState state) {
+              int counter = state.counter.value;
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Hello Mustang'),
                 ),
-                ElevatedButton(
-                  onPressed: CounterService().increment,
-                  child: const Text('Increment'),
+                body: Center(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('$counter'),
+                      ),
+                      ElevatedButton(
+                        onPressed: CounterService().increment,
+                        child: const Text('Increment'),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        );
-      }
+              );
+            },
+          );
+        }
     }
   ```
   
@@ -532,8 +524,7 @@ Annotated a method with *@Around*
   
 - Update `main.dart`
   ```dart
-    ...
- 
+    // ...
     Widget build(BuildContext context) {
       return MaterialApp(
         title: 'Flutter Demo',

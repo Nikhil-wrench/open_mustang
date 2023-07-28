@@ -117,3 +117,6 @@
 
 ## 3.0.2
 - Updated README
+
+## 3.0.3
+- Updated example
