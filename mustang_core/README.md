@@ -1,12 +1,14 @@
 # Mustang
 
-A framework to build Flutter applications. Following features are available out of the box.
+Mustang is an opinionated framework to build Flutter applications. It comes with the following features out of the box.
 
 - State Management
 - Persistence
 - Cache
-- File layout and naming standards
-- Reduces boilerplate with [open_mustang_cli](https://pub.dev/packages/open_mustang_cli)
+- Event management
+
+Mustang expects project files to follow pre-defined conventions. [open_mustang_cli](https://pub.dev/packages/open_mustang_cli) assists in creating files
+as per the conventions.
 
 ## Contents
 - [Framework Components](#framework-components)
@@ -23,39 +25,35 @@ A framework to build Flutter applications. Following features are available out 
 - [Quick Start](#quick-start)
 
 ### Framework Components
-- **Model** - A Dart class. All models as a whole represent the app state.
+- **Model** - *Models* defines data needed for a view.
 
-- **Screen** - Screen is a reusable widget. It usually represents a screen in an app or a page in a web browser.
-Screens can also be used as a widget in another screen.
+- **Screen** - *Screen* is a Flutter widget. *Screens* can be embedded in other screens.
 
-- **State** - State class provides access to the subset of the app state to the corresponding screen.
-It is a Dart class with _1 or more_ `Model` fields.
+- **State** - *State* allows access to the specified models for the associated screen.
 
-- **Service** - Coordinates communication between the corresponding screen and a state. Also, async communication and 
-application logic goes here.
+- **Service** - Data fetching operations and business logic specific to the associated screen are defined in a service. 
 
 ### Component Communication
-- Every `Screen` has a corresponding `Service` and a `State`. All three components work together to continuously
-rebuild the UI whenever there is a change in the application state.
+- Every *Screen* is associated with a *Service* and a *State*
 
     [<img src="https://github.com/getwrench/open_mustang/raw/master/mustang_core/01-components.png"/>](Architecture)
 
-    1. `Screen` reads `State` while building the UI
-    2. `Screen` invokes methods in the `Service` as a response to user events (`scroll`, `tap` etc.)
-    3. `Service` 
-        - reads/updates `Models` in the `MustangStore`
-        - makes API calls, when needed
-        - informs `State` when `MustangStore` is updated
-    4. `State` informs `Screen` to rebuild the UI
-    5. Back to Step 1
+Following steps outline the lifecycle of a screen
+
+1. `Screen` reads `State` while building the UI
+2. `Screen` invokes methods in the `Service` as a response to user events (`scroll`, `tap` etc.)
+3. `Service` 
+    - reads/updates `Models`. `Models` are saved in memory and managed by `MustangStore`
+    - makes API calls, when needed
+    - informs `State` when `Models` are modified
+4. `State` informs `Screen` to rebuild the UI
+5. Back to Step 1
 
 ### Model
 - An abstract class annotated with `appModel`
 - Model name should start with `$`
 - Initialize fields with `InitField` annotation
-- Serialize field with a different name using `WireNameField` annotation
 - Methods/Getters/Setters are `NOT` supported inside `Model` classes
-- If a field should be excluded when a `Model` is persisted to disk, annotate that field with `SerializeField(false)`
     
     ```dart
     @appModel
@@ -67,32 +65,33 @@ rebuild the UI whenever there is a change in the application state.
       @InitField(false)
       late bool admin; 
   
-      @WireNameField('postalCode')
+      @WireNameField('postalCode')  // While de-serializing, map postalCode to zip
       late int zip;
     
       @InitField(['user', 'default'])
       late BuiltList<String> roles;
       
-      late $Address address;  // $Address is another model annotated with @appModel
+      late $Address address;  // Model can be a field in other models
       
-      late BuiltList<$Vehicle> vehicles;  // Use only immutable versions of List/Map as fields inside Model classes
+      late BuiltList<$Vehicle> vehicles;  // Use only immutable versions of List/Map as fields
       
-      @SerializeField(false)
-      late String errorMsg; // errorMsg field will not be included when $User model is persisted 
+      @InitField('')          // field can have multiple annotations
+      @SerializeField(false)  // errorMsg field will not be included when $User model is persisted
+      late String errorMsg; 
     }
     ```
   
 ### State
 - An abstract class annotated with `screenState`
 - State name should start with `$`
-- All fields of the state class must be `Model`s 
+- Only *Models* are allowed as fields 
 
     ```dart      
     @screenState
     abstract class $ExampleScreenState {
-      late $User user;
+      late $User user; // Model
       
-      late $Vehicle vehicle;
+      late $Vehicle vehicle; // Model
     }
     ```
     
@@ -110,11 +109,11 @@ rebuild the UI whenever there is a change in the application state.
     }
     ```
     
-- Service has access to the following APIs
-    - `updateState` -  Updates app state and re-builds the screen. To update the state without re-building the screen,
+- Every service has access to the following important APIs
+    - `updateState` -  Updates models and triggers screen rebuild. To update the models without re-building the screen,
   set `reload` argument to `false`.
         - `updateState()`
-        - `updateState1(T model1, { reload: false })` // only updates the state, screen will re-build
+        - `updateState1(T model1, { reload: false })` - only updates the state; screen will not be re-built
         - `updateState2(T model1, S model2, { reload: true })`
         - `updateState3(T model1, S model2, U model3, { reload: true })`
         - `updateState4(T model1, S model2, U mode3, V model4, { reload: true })`
@@ -124,13 +123,9 @@ rebuild the UI whenever there is a change in the application state.
             ```dart
             // In the snippet below, getScreenData method caches the response of getData method, a Future.
             // Even when getData method is called multiple times, method execution happens only once and uses the
-            // response received the first time.
+            // already fetched response.
             Future<void> getData() async {
-              Common common = MustangStore.get<Common>() ?? Common();
-              User user;
-              Vehicle vehicle;
-
-              ...   
+              // ...   
             }
 
             Future<void> getScreenData() async {
@@ -141,7 +136,7 @@ rebuild the UI whenever there is a change in the application state.
         - `void clearMemoizedScreen()`
             ```dart
             Future<void> getData() async {
-              ...
+              // ...
             }
 
             Future<void> getScreenData() async {
@@ -149,78 +144,59 @@ rebuild the UI whenever there is a change in the application state.
             }
 
             void resetScreen() {
-              // clears Future<void> cached by memoizeScreen()
-              clearMemoizedScreen();
+              clearMemoizedScreen(); // clears Future<void> cached by memoizeScreen()
             }
             ``` 
 
 ### Screen
-- Use `StateProvider` widget to re-build the `Screen` when there is a change in `State`
+- `MustangScreen` widget should be the top-level widget for every screen
   
     ```dart
-    
     Widget build(BuildContext context) {
-      return StateProvider<HomeScreenState>(
-          state: HomeScreenState(),
-          child: Builder(
-            builder: (BuildContext context) {
-              // state variable provides access to model fields declared in the HomeScreenState class
-              HomeScreenState? state = StateConsumer<HomeScreenState>().of(context);
-              
-              // Even when this widget is built many times, only 1 API call 
-              // will be made because the Future from the service is cached
-              SchedulerBinding.instance?.addPostFrameCallback(
-                (_) => HomeScreenService().getScreenData(),
-              );
-    
-              if (state?.common?.busy ?? false) {
-                return Spinner();
-              }
-    
-              if (state?.counter?.errorMsg.isNotEmpty ?? false) {
-                return ErrorBody(errorMsg: state.common.errorMsg);
-              }
-                
-              return _body(state, context);
-            },
-          ),
-        );
-      }
+      return MustangScreen<CounterState>(
+        state: CounterState(context: context),
+        builder: (BuildContext context, CounterState state) {
+          // access counter model from the state
+          int counter = state.counter.value;
+          return Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('$counter'),
+                ),
+                // ...
+              ],
+            ),
+          );
+        },
+      );
+    }
     ```
 
 ### Persistence
 
 [<img src="https://github.com/getwrench/open_mustang/raw/master/mustang_core/02-persistence.png"/>](Persistence)
 
-By default, `app state` is maintained in memory by `MustangStore`. When the app is terminated, the `app state` is lost
-permanently. However, there are cases where it is desirable to persist and restore the `app state`. For example,
+By default, *models* are saved only in the memory. When the app is terminated, models are lost
+permanently. There are cases where it is desirable to persist and restore these models across app restarts.
 
-- Save and restore user's session token to prevent user having to log in everytime
-- Save and restore partial changes in a screen so that the work can be resumed from where the user has left off.
-
-Enabling persistence is simple and works transparently.
+Following code snippet enables persistence for the app.
 
 ```dart
-import 'package:xxx/src/models/serializers.dart' as app_serializer;
-
+// In main.dart, before calling runApp method,
 WidgetsFlutterBinding.ensureInitialized();
 
-// In main.dart before calling runApp method,
-// 1. Enable persistence like below
-MustangStore.config(
-  isPersistent: true,
-  storeName: 'myapp',
-);
-
-// 2. Initialize persistence
+// enable persistence like below
 Directory dir = await getApplicationDocumentsDirectory();
-await MustangStore.initPersistence(dir.path);
-
-// 3. Restore persisted state before the app starts
-await MustangStore.restoreState(app_serializer.json2Type, app_serializer.serializerNames);
+await MustangStore.configPersistence(UnifiedConstants.persistentStoreName, dir.path);
 ```
 
-With the above change, `app state` (`MustangStore`) is persisted to the disk and will be restored into `MustangStore` when the app is started.
+Following code restores the saved state of the app
+```dart
+// Restore persisted state before the app starts
+await MustangStore.restoreState(app_serializer.json2Type, app_serializer.serializerNames);
+```
 
 ### Cache
 
@@ -228,16 +204,16 @@ With the above change, `app state` (`MustangStore`) is persisted to the disk and
 
 `Cache` feature allows switching between instances of the same type on need basis.
 
-`Persistence` is a snapshot of the `app state` in memory (`MustangStore`). However, there are times when data
-need to be persisted but restored only when needed. An example would be a technician working on multiple jobs at the same time i.e, technician switches between jobs.
-Since the `MustangStore` allows only one instance of a type, there cannot be two instances of the Job object in the MustangStore.
+`Persistence` creates snapshots of the *models* in the memory, to the disk. However, there are times when data
+need to be saved for later use and does not need to loaded into memory unless needed. An example would be a technician working on multiple jobs at the same time i.e, technician switches between jobs.
+Since the `MustangStore` allows only one instance of a *type*, there cannot be two instances of *Job* object in the memory.
 
-`Cache` APIs, available in `Service`s, make it easy to restore any instance into memory (`MustangStore`).
+Every *Service* instance has the following `Cache` related APIs
 
 - ```
   Future<void> addObjectToCache<T>(String key, T t)
   ```
-  Save an instance of type `T` in the cache. `key` is an identifier for one or more cached objects.
+  Save an instance of type `T` in the cache. `key` is an identifier for the cached object.
 
 - ```
   Future<void> deleteObjectsFromCache(String key)
@@ -254,8 +230,8 @@ Since the `MustangStore` allows only one instance of a type, there cannot be two
       ) callback,
   )
   ```
-  Restores all objects in the cache identified by the `key` into memory `MustangStore` and also into the persisted store
-  so that the in-memory and persisted app state remain consistent.
+  Restores all objects in the cache identified by the `key` into memory and also into the persisted store
+  so that the in-memory and the persisted data remain consistent.
 
 - ```
   bool itemExistsInCache(String key)
@@ -266,29 +242,18 @@ Since the `MustangStore` allows only one instance of a type, there cannot be two
 
 [<img src="https://github.com/getwrench/open_mustang/raw/master/mustang_core/04-events.png"/>](Events)
 
-There are use cases where application has to react to external events. An external 
-event is any event that is generated *not* as a result of user's interaction with the app.
-Following are the examples external events:
-- Internet connectivity
-- Data update events from the app backend
+There are use cases where application has to react to various events. Following are the examples of such events:
+- Internet connectivity events
+- Data update events from the server
 - Push notifications
 
+
+#### Subscribe to an event:
+
 Mustang allows the app to subscribe to such events. When subscribed, `Service` of the currently visible `Screen` receives
-event notifications and updates them in the MustangStore. `Service` then triggers the `Screen` rebuild.
+event notifications. `Service` then triggers the `Screen` rebuild.
 It is important to keep in mind that every event is an instance of `Model`. And, to use a model as an event, it needs to be
-annotated with `@appEvent`. Following is an example of creating of an event inside `models` folder
-
-```dart
-Widget build(BuildContext context) {
-    return MaterialApp(
-      ...
-      navigatorObservers: [
-        MustangRouteObserver.getInstance(), // this is needed for Events to work
-      ],
-    );
-}
-
-```
+annotated with `@appEvent`. Following is an example of creating of a model event inside `models` folder
 
 ```dart
 @appModel
@@ -299,15 +264,28 @@ abstract class $TimerEvent {
 }
 ```
 
-Create a dart file in your application that can publish events. It is recommended to create these dart files
-outside `screens` folder as they are not tied to or related to any specific screen.
+For events to work, register `MustangRouteObserver` in the app
 
 ```dart
-// Create an event 
-TimerEvent timerEvent = MustangStore.get<TimerEvent>() ?? TimerEvent();
-timerEvent = timerEvent.rebuild((b) => b..value = (b.value ?? 0) + 1);
-// Publish the event
-EventStream.pushEvent(timerEvent);
+Widget build(BuildContext context) {
+    return MaterialApp(
+      // ...
+      navigatorObservers: [
+        MustangRouteObserver.getInstance(), // this is needed for Events to work
+      ],
+    );
+}
+
+```
+#### Publish an event:
+
+Following snippet is an example of app publishing an event generated by an external service
+
+```dart
+connectivity_plus.Connectivity().onConnectivityChanged.listen((var connectivityResult) {
+    MustangAppConfig mustangAppConfig = _connectivityStatus(connectivityResult);
+    EventStream.pushEvent(mustangAppConfig);
+});
 ```
 
 Visible screen of the app automatically rebuilds itself after consuming the event. It is upto the screen
@@ -315,7 +293,77 @@ to show appropriate UI based on the received event.
 
 ### Aspects
 
-TODO
+Aspects are hooks defined on a method. Hooks change the execution flow based on the type of hook defined.
+Mustang supports three kinds of aspects.
+
+In Mustang, *Aspect* is
+- an abstract class annotated with `@aspect`
+- Class name should start with `$`
+- created inside `aspects` directory
+
+#### Before Aspect
+
+Method annotated with *@Before* executes the method passed as argument before running the actual method
+
+```dart
+@aspect
+abstract class $BeforeAspectExample {
+  @invoke
+  Future<void> run(Map<String, dynamic> args) async { // runs before requestCode
+    // ...
+  }
+}
+```
+Annotate method with *@Before*
+```dart
+@Before([r'$BeforeAspectExample'], args: {'one': 1, 'two': 2.2})
+Future<void> requestCode() async {
+  // ...
+}
+```
+#### After Aspect
+Method annotated with *@After* executes the annotated method first followed by the method passed as argument
+
+```dart
+@aspect
+abstract class $AfterAspectExample {
+  @invoke
+  Future<void> run(Map<String, dynamic> args) async { // runs after requestCode
+    // ...
+  }
+}
+```
+Annotated a method with *@After*
+```dart
+@After([r'$AfterAspectExample'], args: {'one': 1, 'two': 2.2})
+Future<void> requestCode() async {
+  // ...
+}
+```
+
+#### Around Aspect
+
+Method annotated with *@Around* passes itself as argument to the method passed as argument
+```dart
+@aspect
+abstract class $AroundAspectExample {
+  @invoke
+  Future<void> run(Map<String, dynamic> args, Function sourceMethod) async {
+    // before requestCode()
+    // ...
+    await sourceMethod(); // runs requestCode()
+    // after requestCode()
+    // ...
+  }
+```
+
+Annotated a method with *@Around*
+```dart
+  @Around(r'$AroundAspectExample', args: {'service': 'DemoScreenService'})
+  Future<void> requestCode() async {
+    // ...
+  }
+```
 
 ### Project Structure
 - Project structure of a Flutter application created with Mustang framework looks as below
