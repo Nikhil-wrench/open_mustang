@@ -112,3 +112,6 @@
 ## 3.0.0
 - Support for Dart 3
 
+## 3.0.1
+- Updated README
+
