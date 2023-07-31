@@ -49,8 +49,7 @@ class MustangCache {
       void Function<T>(T t) update,
       String modelName,
       String jsonStr,
-    )
-        callback,
+    ) callback,
   ) async {
     LazyBox lazyBox = Hive.lazyBox(_cacheName);
     if (lazyBox.isOpen) {

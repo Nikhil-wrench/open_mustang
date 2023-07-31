@@ -52,8 +52,7 @@ class WrenchCache {
       void Function<T>(T t) update,
       String modelName,
       String jsonStr,
-    )
-        callback,
+    ) callback,
   ) async {
     LazyBox lazyBox = Hive.lazyBox(cacheName);
     if (lazyBox.isOpen) {

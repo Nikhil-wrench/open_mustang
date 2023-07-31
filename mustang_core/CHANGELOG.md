@@ -120,3 +120,6 @@
 
 ## 3.0.3
 - Updated example
+
+## 3.0.4
+- Updated doc images
