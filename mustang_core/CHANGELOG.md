@@ -123,3 +123,6 @@
 
 ## 3.0.4
 - Updated doc images
+
+## 3.0.5
+- lint fixes

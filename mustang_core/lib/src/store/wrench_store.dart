@@ -114,8 +114,7 @@ class WrenchStore {
       void Function<T>(T t) update,
       String modelName,
       String jsonStr,
-    )
-        callback,
+    ) callback,
     List<String> serializerNames,
   ) async {
     if (persistent && hiveBox != null) {

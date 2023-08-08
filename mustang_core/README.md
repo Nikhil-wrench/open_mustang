@@ -6,6 +6,7 @@ Mustang is an opinionated framework to build Flutter applications. It comes with
 - Persistence
 - Cache
 - Event management
+- Aspects
 
 Mustang expects project files to follow pre-defined conventions. [open_mustang_cli](https://pub.dev/packages/open_mustang_cli) assists in creating files
 as per those conventions.

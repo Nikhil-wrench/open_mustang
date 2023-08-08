@@ -180,8 +180,7 @@ class MustangStore {
       void Function<T>(T t) update,
       String modelName,
       String jsonStr,
-    )
-        callback,
+    ) callback,
     List<String> serializerNames,
   ) async {
     if (_persistent && _storeName != null) {
