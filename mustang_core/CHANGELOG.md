@@ -126,3 +126,6 @@
 
 ## 3.0.5
 - lint fixes
+
+## 3.1.0
+- New API in MustangStore allows deletion of specific models from memory and from the persisted store

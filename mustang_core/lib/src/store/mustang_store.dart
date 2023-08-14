@@ -7,9 +7,8 @@ import 'package:mustang_core/src/cache/mustang_cache.dart';
 /// [MustangStore] is an in-memory key-value object database.
 ///
 /// - Objects are saved to the store using it's type as the key
-/// - Types should not be null. E.g User? is not valid
-/// - If an object exists, saving that object in the store will overwrite
-/// the existing object
+/// - Types should not be null. E.g. User is a valid type but not User?
+/// - If an object exists, existing object will be replaced
 class MustangStore {
   // Underlying data structure for the objects in the store
   static final HashMap<String, Object> _hashStore = HashMap();
@@ -20,14 +19,15 @@ class MustangStore {
   // Flag to toggle persistence
   static bool _persistent = false;
 
-  // Identifier for the persisted objects
   static String? _storeName;
 
-  // Identifier for the cached objects
   static String? _cacheStoreName;
 
-  // File system path for persisted and cached objects
+  // File system path for the persisted and cached objects
   static String? _storeLocation;
+
+  /// Returns persistence status of the store
+  static bool get persistent => _persistent;
 
   /// Looks up for an object of type [T].
   /// Returns null if the object is not found.
@@ -101,13 +101,20 @@ class MustangStore {
     update<V>(v);
   }
 
-  /// Removes an object of type [T]
-  static void delete<T>() {
+  /// Removes an object of type [T] from memory and from the persistent store
+  static Future<void> delete<T>() async {
+    _hashStore.remove(T.toString());
+    await deletePersistedState([T.toString()]);
+  }
+
+  /// Removes an object of type [T] only from memory
+  /// Note: This API is only for unit testing
+  static Future<void> deleteFromStore<T>() async {
     _hashStore.remove(T.toString());
   }
 
   /// Delete all objects from the store
-  static void nuke() async {
+  static Future<void> nuke() async {
     _hashStore.clear();
     if (_persistent && _storeName != null) {
       Box box = Hive.box(_storeName!);
@@ -119,7 +126,7 @@ class MustangStore {
 
   /// Configures persistence for the store
   @Deprecated('Use configPersistence method')
-  static void config({
+  static Future<void> config({
     bool isPersistent = false,
     String? storeName,
   }) async {
@@ -141,7 +148,9 @@ class MustangStore {
   /// [storeLocation] is optional for Web.
   /// Persistence also enables cache behind the scenes.
   static Future<void> configPersistence(
-      String storeName, String? storeLocation) async {
+    String storeName,
+    String? storeLocation,
+  ) async {
     _persistent = true;
     _storeName = storeName;
     _cacheStoreName = '${storeName}Cache';
@@ -172,7 +181,7 @@ class MustangStore {
     }
   }
 
-  /// Allows the caller to deserialize and load them into the Mustang Store.
+  /// Allows the caller to deserialize and load objects into the Mustang Store.
   /// Note: Deserialization has to be done by the caller. This method only
   /// returns serialized objects and their types.
   static Future<void> restoreState(
@@ -195,7 +204,7 @@ class MustangStore {
     }
   }
 
-  /// If persistence is enabled, it deletes all persisted objects
+  /// If persistence is enabled, delete specified persisted models
   static Future<void> deletePersistedState(List<String> deleteModels) async {
     if (_persistent && _storeName != null) {
       Box box = Hive.box(_storeName!);
@@ -205,6 +214,31 @@ class MustangStore {
     }
   }
 
-  /// Returns persistence status of the store
-  static bool get persistent => _persistent;
+  /// Deletes all objects except the ones passed in to the the
+  /// preserveModels argument
+  static Future<void> deleteObjects({
+    required List<String> preserveModels,
+  }) async {
+    List<String> modelsToDelete = [];
+    _hashStore.removeWhere((type, _) {
+      bool preserve = preserveModels.contains(type);
+      if (!preserve) {
+        modelsToDelete.add(type);
+      }
+      return !preserve;
+    });
+    await deletePersistedState(modelsToDelete);
+  }
+
+  /// Returns the stringified model from the persistence store.
+  /// Returns null if the model does not exist.
+  static Future<String?> getPersistedObject(String modelName) async {
+    if (_persistent && _storeName != null) {
+      Box box = Hive.box(_storeName!);
+      if (box.isOpen) {
+        return await box.get(modelName);
+      }
+    }
+    return null;
+  }
 }
