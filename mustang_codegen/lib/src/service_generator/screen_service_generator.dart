@@ -339,10 +339,10 @@ class ScreenServiceGenerator extends Generator {
           return screenStateCache.t;
         }
         
-        void clearMemoizedScreen({
+        Future<void> clearMemoizedScreen({
           reload = true,
-        }) {
-          MustangStore.delete<_\$${screenState}Cache>();
+        }) async {
+          await MustangStore.delete<_\$${screenState}Cache>();
           if (kDebugMode) {
             postEvent('$serviceName: ${Utils.debugObjectMutationEventKind}', {
               'model': '\${_\$${screenState}Cache}',

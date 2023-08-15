@@ -207,3 +207,6 @@
 
 ## 3.0.2
 - Bug fix - disposed state is added to the Mustang store on screen push
+
+## 3.1.0
+- Fix - In the generated service, MustangStore.delete does not await
