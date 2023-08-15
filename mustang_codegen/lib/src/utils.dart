@@ -22,7 +22,7 @@ class Utils {
   static String class2File(String className) {
     RegExp exp = RegExp(r'(?<=[0-9a-z])[A-Z]');
     return className
-        .replaceAllMapped(exp, (Match m) => ('_' + (m.group(0) ?? '')))
+        .replaceAllMapped(exp, (Match m) => ('_${m.group(0) ?? ''}'))
         .toLowerCase();
   }
 
