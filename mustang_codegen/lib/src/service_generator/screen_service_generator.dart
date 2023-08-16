@@ -546,10 +546,10 @@ class ScreenServiceGenerator extends Generator {
           return $utilClass().memoizeScreen(service);
         }
         
-        void clearMemoizedScreen({
+        Future<void> clearMemoizedScreen({
           reload = true,
-        }) {
-          $utilClass().clearMemoizedScreen(reload: reload);    
+        }) async {
+          await $utilClass().clearMemoizedScreen(reload: reload);    
         }
         
         Future<void> addObjectToCache<T>(String key, T t) async {

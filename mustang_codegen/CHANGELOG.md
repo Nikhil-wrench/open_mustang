@@ -210,3 +210,6 @@
 
 ## 3.1.0
 - Fix - In the generated service, MustangStore.delete does not await
+
+## 3.1.1
+- Fix - missing await for clearScreenCache in the generated service
