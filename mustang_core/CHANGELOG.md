@@ -129,3 +129,6 @@
 
 ## 3.1.0
 - New API in MustangStore allows deletion of specific models from memory and from the persisted store
+
+## 3.1.1
+- Documentation and guidelines for screen widgets and service extensions

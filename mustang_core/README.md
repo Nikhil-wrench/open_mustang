@@ -379,16 +379,124 @@ Annotated a method with *@Around*
             - model2.dart
           - screens/
             - first/
+              - ext/
+                - first_extension_service.dart
+                - second_extension_service.dart
+              - widgets/
+                - first_widget.dart
+                - second_widget.dart
               - first_screen.dart
               - first_state.dart
               - first_service.dart
             - second/
+              - ext/
+                - first_extension_service.dart
+                - second_extension_service.dart
+              - widgets/
+                - first_widget.dart
+                - second_widget.dart
               - second_screen.dart
               - second_state.dart
               - second_service.dart
     ```
 - Every `Screen` needs a `State` and a `Service`. So, `Screen, State, Service` files are grouped inside a directory
+- The `Screen` and `Service` can be broken down into smaller components called `Widget` and `Extension` respectively.
+  The widgets for a given screen are grouped together in the `<screen>/widgets` subdirectory. Whereas the extensions
+  are grouped together inside `<screen>/ext` directory 
 - All `Model` classes must be inside `models` directory
+
+#### Guidelines for service extensions and screen widgets
+**Widget**
+
+In general, when breaking a screen down into smaller widgets ensure that the state is 
+accessed directly. Consider the example below
+
+```dart
+class Locations extends StatelessWidget {
+  const Locations({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // GOOD
+    // screen_one/screen_one_state.state.dart
+    ScreenOneState state = StateConsumer<ScreenOneState>().of(context)!;
+    List<Location> locations = state.manageCustomer.locations.toList();
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: locations.length,
+      itemBuilder: (_, int index) {
+        return LocationCard(
+          location: locations.elementAt(index),
+        );
+      },
+    );
+  }
+}
+```
+In the above example we are accessing the state in the `build` method of the widget. This is the recommended approach as opposed to passing it as an argument from the parent like shown below
+
+```dart
+class Locations extends StatelessWidget {
+  const Locations({Key? key,
+    required this.state,
+  }) : super(key: key);
+
+  // BAD
+  // screen_one/screen_one_state.state.dart
+  final ScreenOneState state;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Location> locations = state.manageCustomer.locations.toList();
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: locations.length,
+      itemBuilder: (_, int index) {
+        return LocationCard(
+          location: locations.elementAt(index),
+        );
+      },
+    );
+  }
+}
+```
+
+**Extension**
+
+Extensions allow you to break the `Service` into more manageable components. 
+This can be achieved using `mixin` as shown below
+
+- create an extension
+    
+    ```dart
+    // screen_one/ext/input_handler_service.dart
+    
+    @screenService
+    mixin $InputHandlerService {
+      void helloWorld() {
+        print('hello world');
+      }
+    }
+    ```
+- bind the extension with the service
+    ```dart
+    // screen_one/screen_one_service.dart
+    
+    @screenService
+    abstract class $ScreenOneService with $InputHandlerService {}
+    ```
+- Run the builder
+    ```bash
+      omcli -b
+    ```
+- Access the method in the extension like a normal service method
+    ```dart
+    ScreenOneService().helloWorld();
+    ```
 
 ### Quick Start
 
