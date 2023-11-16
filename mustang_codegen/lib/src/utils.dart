@@ -145,9 +145,11 @@ class Utils {
   /// Example Output: validateToken(userId: userId, token: token)
   static String methodWithExecutionArgs(
     MethodElement element,
-    List<String> imports,
-  ) {
-    String methodWithArguments = 'super.${element.displayName}(';
+    List<String> imports, {
+    String declarationInvocation = 'super',
+  }) {
+    String methodWithArguments =
+        '$declarationInvocation.${element.displayName}(';
     if (element.parameters.isNotEmpty) {
       element.parameters.toList().forEach((parameter) {
         String importForParam =

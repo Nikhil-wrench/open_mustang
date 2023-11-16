@@ -85,14 +85,18 @@ class ServiceMethodOverrideVisitor extends SimpleElementVisitor<void> {
       String declaration =
           element.declaration.getDisplayString(withNullability: false);
 
-      overrides.add('''
+      if (beforeHooks.isNotEmpty ||
+          aroundHooks.isNotEmpty ||
+          afterHooks.isNotEmpty) {
+        overrides.add('''
           @override
           $declaration async {
-            ${beforeHooks.join('')}
-            await ${aroundHooks.isEmpty ? methodWithExecutionArgs : nestedAroundMethods};
-            ${afterHooks.join('')}
-          }
-        ''');
+              ${beforeHooks.join('')}
+              await ${aroundHooks.isEmpty ? methodWithExecutionArgs : nestedAroundMethods};
+              ${afterHooks.join('')}
+            }
+          ''');
+      }
 
       return super.visitMethodElement(element);
     }

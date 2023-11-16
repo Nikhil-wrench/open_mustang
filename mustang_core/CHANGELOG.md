@@ -132,3 +132,6 @@
 
 ## 3.1.1
 - Documentation and guidelines for screen widgets and service extensions
+
+## 3.2.0
+- New annotations to support batching of service methods

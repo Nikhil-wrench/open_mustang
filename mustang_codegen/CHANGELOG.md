@@ -213,3 +213,6 @@
 
 ## 3.1.1
 - Fix - missing await for clearScreenCache in the generated service
+
+## 3.2.0
+- Support for batch execution of service methods

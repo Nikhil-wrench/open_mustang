@@ -1,11 +1,11 @@
 builders:
-#  mustang_config_builder:
-#    import: 'package:mustang_codegen/builder.dart'
-#    builder_factories: [ 'mustangConfigBuilder' ]
-#    build_extensions: { '.yaml': [ '.dart' ] }
-#    auto_apply: root_package
-#    build_to: source
-#    runs_before: [ 'mustang_codegen:model_builder' ]
+  #  mustang_config_builder:
+  #    import: 'package:mustang_codegen/builder.dart'
+  #    builder_factories: [ 'mustangConfigBuilder' ]
+  #    build_extensions: { '.yaml': [ '.dart' ] }
+  #    auto_apply: root_package
+  #    build_to: source
+  #    runs_before: [ 'mustang_codegen:model_builder' ]
   model_builder:
     import: 'package:mustang_codegen/builder.dart'
     builder_factories: [ 'appModelLibraryBuilder' ]
@@ -17,6 +17,19 @@ builders:
       generate_for: {
         exclude: [ '**/models/*.model.dart', '**/models/*.model.g.dart' ],
         include: [ '**/models/*.dart' ]
+      }
+    }
+  batch_run_builder:
+    import: 'package:mustang_codegen/builder.dart'
+    builder_factories: [ 'appBatchLibraryBuilder' ]
+    build_extensions: { '.dart': [ '.batch.dart' ] }
+    auto_apply: root_package
+    build_to: source
+    runs_before: [ 'mustang_codegen:built_value' ]
+    defaults: {
+      generate_for: {
+        exclude: [ '**/batches/*.batch.dart' ],
+        include: [ '**/batches/*.dart' ]
       }
     }
   app_serializer_builder:
@@ -86,6 +99,7 @@ builders:
     applies_builders: [ 'source_gen|combining_builder' ]
     defaults: {
       generate_for: {
-        include: [ '**/models/*.model.dart', '**/models/serializers.dart' ]
+        include: [ '**/models/*.model.dart',
+                   '**/models/serializers.dart' ]
       }
     }
