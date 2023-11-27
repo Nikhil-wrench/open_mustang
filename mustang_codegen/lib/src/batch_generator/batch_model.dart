@@ -6,7 +6,7 @@ class BatchModel {
     required this.methodWithBatchRun,
   });
 
-  final ClassElement serviceClass;
+  final Element serviceClass;
 
   final MethodElement methodWithBatchRun;
 }

@@ -216,3 +216,6 @@
 
 ## 3.2.0
 - Support for batch execution of service methods
+
+## 3.2.1
+- casting exception fix

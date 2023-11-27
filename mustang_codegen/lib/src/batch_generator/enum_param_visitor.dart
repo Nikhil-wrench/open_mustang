@@ -12,7 +12,7 @@ class EnumParamVisitor extends SimpleElementVisitor<void> {
     this.fields,
   );
 
-  final ClassElement serviceClassElement;
+  final Element serviceClassElement;
 
   final EnumElement batchEnum;
 

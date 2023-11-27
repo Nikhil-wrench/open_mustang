@@ -39,15 +39,15 @@ class AppBatchGenerator implements Generator {
 
         serviceClass.visitChildren(
           EnumParamVisitor(
-            serviceClass as ClassElement,
+            serviceClass,
             batch,
             serviceBatchMethods,
           ),
         );
 
         if (serviceBatchMethods.isNotEmpty) {
-          String? package = serviceClass.librarySource.uri.toString();
-          package = package.split('.').join('.service.');
+          String? package = serviceClass.librarySource?.uri.toString();
+          package = package?.split('.').join('.service.');
           imports.add("import '$package';");
           batchModels.addAll(serviceBatchMethods);
         }
