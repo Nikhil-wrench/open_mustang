@@ -1,106 +1,138 @@
-## 1.0.0
+## 3.3.0
 
-- Initial version, created by Stagehand
+- Notify all mounted states when a shared model is updated
 
-## 1.0.1
+## 3.2.1
 
-- Updated pubspec.yaml and README
+- casting exception fix
 
-## 1.0.2
+## 3.2.0
 
-- Updated README, pubspec.yaml
+- Support for batch execution of service methods
 
-## 1.0.3
+## 3.1.1
 
-- Updated README, pubspec.yaml
+- Fix - missing await for clearScreenCache in the generated service
 
-## 1.0.4
+## 3.1.0
 
-- Added support for config.yaml to generate custom framework code
+- Fix - In the generated service, MustangStore.delete does not await
 
-## 1.0.5
+## 3.0.2
 
-- Removed flutter dev dependency
+- Bug fix - disposed state is added to the Mustang store on screen push
 
-## 1.0.6
+## 3.0.1
 
-- Add validation to force fields in the `State` to be models in `src/models` folder
+- Bug fix - incorrect state disposal
+- Bug fix - model codegen fails when serialized annotation is false
 
-## 1.0.7
+## 3.0.0
 
-- Bug - Caching/Persistence fails when web application is built in release mode
+- Support for Dart 3
 
-## 1.0.8
+## 1.1.21
 
-- New - Post state change events to Dart VM Client in debug mode, when subscribed
+- Fix - Incorrect regex while parsing model files in Flutter version >= 3.3.0
 
-## 1.0.9
+## 1.1.20
 
-- New - Add debug hooks for generated state classes
+- Added support for extended screen service files
 
-## 1.0.10
+## 1.1.19
 
-- Fix - Generated state class are not captured in VM client
+- Predictable customer serializer alias in the generated service file
 
-## 1.0.11
+## 1.1.18
 
-- Model, State and Service are all made abstract
+- Fixed issue with service generator
 
-## 1.0.12
+## 1.1.17
 
-- Framework introduced support to consume events
+- Disabled config builders for now
+- `MustangAppConfig`, a model and event, is available for all applications by default
 
-## 1.0.13
+## 1.1.16
 
-- Framework introduced support for `before`, `after`, `around` Aspects
+- Bug fix - mustang.yaml should be optional for serializer builder
 
-## 1.0.14
+## 1.1.15
 
-- `mustang.yaml` config file should now be in project's home directory
+- Bug fix - mustang.yaml should be optional for config builder
 
-## 1.0.15
+## 1.1.14
 
-- Fix - mustang.yaml is not getting picked up from the project root directory
+- Made mustang state object generation optional
 
-## 1.0.16
+## 1.1.13
 
-- Aspects can accept arguments
+- Downgraded analyzer dep to 5.2.0
 
-## 1.0.17
+## 1.1.12
 
-- Renamed `WrenchStore` to `MustangStore` and `WrenchCache` to `MustangCache`
+- Added support to generated mustang state object using mustang.yaml
 
-## 1.0.18
+## 1.1.11
 
-- Bug - String args for Aspects does not have quotes in the generated file
+- Fixed deprecated analyzer APIs
 
-## 1.0.19
+## 1.1.10
 
-- Bug - Event codegen fails when model filename has `model`
+- Upgraded dependencies
 
-## 1.0.20
+## 1.1.9
 
-- Bug - Codegen for State fails when model does not start with `$`
+- lint fixes
 
-## 1.0.21
+## 1.1.8
 
-- Fix: lint warnings
+- Bug fix
 
-## 1.0.22
+## 1.1.7
 
-- Fix: Services are subscribing to event when the eventModel is not used in the state
+- Model generator supports WireNameField annotation
 
-## 1.0.23
+## 1.1.6
 
-- Fix: Incorrect file name while generating event subscription code
+- Fixed deprecated usage
 
-## 1.0.24
+## 1.1.5
 
-- Fix: When a route is popped, event stream subscription is lost
+- Fix: null exception when route is discarded
+- Added support for global app events
 
-## 1.0.25
+## 1.1.4
 
-- Fix: Notifier is disposed after popping a route
+- Updated deps
+
+## 1.1.3
+
+- Set min version for `path` package to 1.8.1
+
+## 1.1.2
+
+- Converted to dart package project
+
+## 1.1.1
+
+- Updated all deps
+
+## 1.1.0
+
+- Updated build order for build_runner
+
+## 1.0.29
+
+- Added doc comments
+- Updated deps
+
+## 1.0.28
+
+- Addressed pub.dev issues partially
+
+## 1.0.27
+
+- Fix: Active state instance is getting deleted while disposing the change notifier
 
 ## 1.0.26
 
@@ -108,114 +140,106 @@
 - Lint fixes
 - MustangScreen wrapper widget supports fetching data
 
-## 1.0.27
+## 1.0.25
 
-- Fix: Active state instance is getting deleted while disposing the change notifier
+- Fix: Notifier is disposed after popping a route
 
-## 1.0.28
+## 1.0.24
 
-- Addressed pub.dev issues partially
+- Fix: When a route is popped, event stream subscription is lost
 
-## 1.0.29
+## 1.0.23
 
-- Added doc comments
-- Updated deps
+- Fix: Incorrect file name while generating event subscription code
 
-## 1.1.0
+## 1.0.22
 
-- Updated build order for build_runner
+- Fix: Services are subscribing to event when the eventModel is not used in the state
 
-## 1.1.1
+## 1.0.21
 
-- Updated all deps
+- Fix: lint warnings
 
-## 1.1.2
+## 1.0.20
 
-- Converted to dart package project
+- Bug - Codegen for State fails when model does not start with `$`
 
-## 1.1.3
+## 1.0.19
 
-- Set min version for `path` package to 1.8.1
+- Bug - Event codegen fails when model filename has `model`
 
-## 1.1.4
+## 1.0.18
 
-- Updated deps
+- Bug - String args for Aspects does not have quotes in the generated file
 
-## 1.1.5
+## 1.0.17
 
-- Fix: null exception when route is discarded
-- Added support for global app events
+- Renamed `WrenchStore` to `MustangStore` and `WrenchCache` to `MustangCache`
 
-## 1.1.6
+## 1.0.16
 
-- Fixed deprecated usage
+- Aspects can accept arguments
 
-## 1.1.7
+## 1.0.15
 
-- Model generator supports WireNameField annotation
+- Fix - mustang.yaml is not getting picked up from the project root directory
 
-## 1.1.8
+## 1.0.14
 
-- Bug fix
+- `mustang.yaml` config file should now be in project's home directory
 
-## 1.1.9
-- lint fixes
+## 1.0.13
 
-## 1.1.10
-- Upgraded dependencies
+- Framework introduced support for `before`, `after`, `around` Aspects
 
-## 1.1.11
-- Fixed deprecated analyzer APIs
+## 1.0.12
 
-## 1.1.12
-- Added support to generated mustang state object using mustang.yaml
+- Framework introduced support to consume events
 
-## 1.1.13
-- Downgraded analyzer dep to 5.2.0
+## 1.0.11
 
-## 1.1.14
-- Made mustang state object generation optional
+- Model, State and Service are all made abstract
 
-## 1.1.15
-- Bug fix - mustang.yaml should be optional for config builder
+## 1.0.10
 
-## 1.1.16
-- Bug fix - mustang.yaml should be optional for serializer builder
+- Fix - Generated state class are not captured in VM client
 
-## 1.1.17
-- Disabled config builders for now
-- `MustangAppConfig`, a model and event, is available for all applications by default
+## 1.0.9
 
-## 1.1.18
-- Fixed issue with service generator
+- New - Add debug hooks for generated state classes
 
-## 1.1.19
-- Predictable customer serializer alias in the generated service file
+## 1.0.8
 
-## 1.1.20
-- Added support for extended screen service files
+- New - Post state change events to Dart VM Client in debug mode, when subscribed
 
-## 1.1.21
-- Fix - Incorrect regex while parsing model files in Flutter version >= 3.3.0
+## 1.0.7
 
-## 3.0.0
-- Support for Dart 3
+- Bug - Caching/Persistence fails when web application is built in release mode
 
-## 3.0.1
-- Bug fix - incorrect state disposal
-- Bug fix - model codegen fails when serialized annotation is false
+## 1.0.6
 
-## 3.0.2
-- Bug fix - disposed state is added to the Mustang store on screen push
+- Add validation to force fields in the `State` to be models in `src/models` folder
 
-## 3.1.0
-- Fix - In the generated service, MustangStore.delete does not await
+## 1.0.5
 
-## 3.1.1
-- Fix - missing await for clearScreenCache in the generated service
+- Removed flutter dev dependency
 
-## 3.2.0
-- Support for batch execution of service methods
+## 1.0.4
 
-## 3.2.1
-- casting exception fix
+- Added support for config.yaml to generate custom framework code
+
+## 1.0.3
+
+- Updated README, pubspec.yaml
+
+## 1.0.2
+
+- Updated README, pubspec.yaml
+
+## 1.0.1
+
+- Updated pubspec.yaml and README
+
+## 1.0.0
+
+- Initial version, created by Stagehand

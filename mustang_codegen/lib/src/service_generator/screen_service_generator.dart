@@ -183,7 +183,7 @@ class ScreenServiceGenerator extends Generator {
         void updateState() {
           $screenState? screenState = MustangStore.get<$screenState>();
           if (screenState != null) {
-            screenState.update();
+            screenState.reload();
           }
         }
         
@@ -208,7 +208,7 @@ class ScreenServiceGenerator extends Generator {
           if (reload) {
             $screenState? screenState = MustangStore.get<$screenState>();
             if (screenState != null) {
-              screenState.update();
+              screenState.update({'\$T'});
             }
           }
         }
@@ -239,7 +239,7 @@ class ScreenServiceGenerator extends Generator {
           if (reload) {
             $screenState? screenState = MustangStore.get<$screenState>();
             if (screenState != null) {
-              screenState.update();
+              screenState.update({'\$T', '\$S'});
             }
           }
         }
@@ -275,7 +275,7 @@ class ScreenServiceGenerator extends Generator {
           if (reload) {
             $screenState? screenState = MustangStore.get<$screenState>();
             if (screenState != null) {
-              screenState.update();
+              screenState.update({'\$T, \$S, \$U'});
             }
           }
         }
@@ -316,7 +316,7 @@ class ScreenServiceGenerator extends Generator {
           if (reload) {
             $screenState? screenState = MustangStore.get<$screenState>();
             if (screenState != null) {
-              screenState.update();
+              screenState.update({'\$T, \$S, \$U, \$V'});
             }
           }
         }
@@ -352,7 +352,7 @@ class ScreenServiceGenerator extends Generator {
           if (reload) {
             $screenState? screenState = MustangStore.get<$screenState>();
             if (screenState != null) {
-              screenState.update();
+              screenState.reload();
             }
           }    
         }

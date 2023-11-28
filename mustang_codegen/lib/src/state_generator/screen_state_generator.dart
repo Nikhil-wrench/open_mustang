@@ -33,6 +33,7 @@ class ScreenStateGenerator extends Generator {
     String stateName = element.displayName.replaceFirst(r'$', '');
     ClassElement stateClass = element as ClassElement;
     List<String> stateModelFields = [];
+    List<String> stateModelTypes = [];
 
     String importGenService =
         "import '${Utils.stateClassToGenServiceFile(stateName)}';";
@@ -46,14 +47,36 @@ class ScreenStateGenerator extends Generator {
       String declaration =
           '$fieldType get $fieldName => MustangStore.get<$fieldType>() ?? $fieldType();';
       stateModelFields.add(declaration);
+      stateModelTypes.add(fieldType);
     }
     List<String> stateImports =
         Utils.getImports(element.library.libraryImports);
+
+    List<String> modelStatesUpdate = [];
+    List<String> modelStatesRemove = [];
+    List<String> putIfAbsent = [];
+
+    putIfAbsent.addAll(stateModelTypes.map((state) => '''
+      ..states.putIfAbsent('$state', () => BuiltList<String>({}))
+    '''));
+
+    modelStatesUpdate.addAll(stateModelTypes.map((state) => '''
+      if(key == '$state') {
+        return value.rebuild((b) => b..add('$stateName'));
+      }
+    '''));
+
+    modelStatesRemove.addAll(stateModelTypes.map((state) => '''
+       if(key == '$state') {
+        return value.rebuild((b) => b..remove('$stateName'));
+      }
+    '''));
 
     return '''
       import 'dart:async';
       import 'dart:developer';
       import 'package:flutter/foundation.dart';
+      import 'package:built_collection/built_collection.dart';
       import 'package:flutter/widgets.dart';
       import 'package:mustang_core/mustang_core.dart';
       import 'package:mustang_widgets/mustang_widgets.dart';
@@ -61,7 +84,7 @@ class ScreenStateGenerator extends Generator {
       
       $importGenService
       
-      class $stateName extends ChangeNotifier implements RouteAware {
+      class $stateName extends ChangeNotifier implements RouteAware, MustangState {
         late final BuildContext context;
         late String status;
         
@@ -79,6 +102,23 @@ class ScreenStateGenerator extends Generator {
           status = 'active';
           MustangStore.update(this);
           MustangRouteObserver.getInstance().subscribe(this, ModalRoute.of(context)!);
+          
+          MustangAppConfig mustangAppConfig =
+          MustangStore.get<MustangAppConfig>() ?? MustangAppConfig();
+        
+          mustangAppConfig = mustangAppConfig.rebuild(
+            (b) => b
+            ${putIfAbsent.join('\n')}
+            ..states.updateAllValues(
+                  (key, value) {
+                ${modelStatesUpdate.join('\n')}
+    
+                return value;
+              },
+            ),
+          );
+          MustangStore.update(mustangAppConfig);
+          
           if (kDebugMode) {
             postEvent('$stateName - ${Utils.debugObjectMutationEventKind}', {
               'model': '\$$stateName', 
@@ -89,8 +129,24 @@ class ScreenStateGenerator extends Generator {
         
         ${stateModelFields.join('\n')}
         
-        void update() {
-          notifyListeners(); 
+        void update(Set<String> updatedModels) {      
+        MustangAppConfig mustangAppConfig =
+        MustangStore.get<MustangAppConfig>() ?? MustangAppConfig();
+          BuiltMap<String, BuiltList<String>> mustangStates = mustangAppConfig.states;
+          Set<String> dirtyStates = <String>{};
+          for (String model in updatedModels) {
+            dirtyStates.addAll(mustangStates[model] ?? {});
+          }
+      
+          for (String state in dirtyStates) {
+            MustangState? stateObj = MustangStore.getState(name: state);
+            stateObj?.reload();
+          }
+        }
+      
+        @override
+        void reload() {
+          notifyListeners();
         }
         
         @override
@@ -98,6 +154,22 @@ class ScreenStateGenerator extends Generator {
           status = 'disposed';
           MustangRouteObserver.getInstance().unsubscribe(this);
           MustangStore.delete<$stateName>();
+          
+          MustangAppConfig mustangAppConfig =
+        MustangStore.get<MustangAppConfig>() ?? MustangAppConfig();
+          
+          mustangAppConfig = mustangAppConfig.rebuild(
+              (b) => b
+                ..states.updateAllValues(
+                    (key, value) {
+                  ${modelStatesRemove.join('\n')}
+      
+                  return value;
+                },
+            ),
+          );
+          MustangStore.update(mustangAppConfig);
+          
           if (kDebugMode) {
             postEvent('$stateName - ${Utils.debugObjectMutationEventKind}', {
               'model': '\$$stateName', 

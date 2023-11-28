@@ -8,4 +8,6 @@ import 'package:mustang_core/src/annotations/init_field.dart';
 abstract class $MustangAppConfig {
   @InitField({})
   late BuiltMap<String, Object> config;
+
+  late BuiltMap<String, BuiltList<String>> states;
 }

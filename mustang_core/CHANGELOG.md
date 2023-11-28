@@ -1,43 +1,115 @@
-## 1.0.0
+## 3.3.0
 
-- Initial version, created by Stagehand
+- New API and interface to access specific state object
 
-## 1.0.1
+## 3.2.0
 
-- Updated pubspec.yaml and README
+- New annotations to support batching of service methods
 
-## 1.0.2
+## 3.1.1
 
-- Updated README, pubspec.yaml
+- Documentation and guidelines for screen widgets and service extensions
 
-## 1.0.3
+## 3.1.0
 
-- Removed reference to dart:io package
+- New API in MustangStore allows deletion of specific models from memory and from the persisted store
 
-## 1.0.4
+## 3.0.5
 
-- Removed reference to dart:io package
+- lint fixes
 
-## 1.0.5
+## 3.0.4
 
-- Framework introduced support to consume events
+- Updated doc images
 
-## 1.0.6
+## 3.0.3
 
-- Framework introduced support for `before`, `after`, `around` Aspects
+- Updated example
 
-## 1.0.7
+## 3.0.2
 
-- Aspects can accept arguments
+- Updated README
 
-## 1.0.8
+## 3.0.1
 
-- Renamed `WrenchStore` to `MustangStore` and `WrenchCache` to `MustangCache`
+- Updated README
 
-## 1.0.9
+## 3.0.0
 
-- Fix: Lint warnings
-- Fix: added null assertion for Mustang store update
+- Support for Dart 3
+
+## 1.1.13
+
+- Adding missing export
+
+## 1.1.12
+
+- Deleted `mustang.yaml` file changes from README
+- `MustangAppConfig`, a model and event, is available for all applications by default
+- Better debugging data for models
+
+## 1.1.11
+
+- Updated README
+
+## 1.1.10
+
+- doc fix
+
+## 1.1.9
+
+- Updated documentation for Mustang Store and Mustang Cache
+- Deprecated redundant methods in Mustang Store
+
+## 1.1.8
+
+- lint fixes
+
+## 1.1.7
+
+- Introduced new annotation `WireNameField` to support custom name for the field when the object is serialized
+
+## 1.1.6
+
+- Updated packages
+
+## 1.1.5
+
+- Added support for global events
+
+## 1.1.4
+
+- Updated README
+
+## 1.1.3
+
+- Updated README
+
+## 1.1.2
+
+- Add example
+
+## 1.1.1
+
+- Converted to dart package project
+
+## 1.1.0
+
+- Moved flutter widgets into mustang_widgets repo
+- Made mustang_core pure dart package
+
+## 1.0.13
+
+- Added example
+- Fixed broken images in README
+
+## 1.0.12
+
+- Updated documentation
+
+## 1.0.11
+
+- Added MustangScreen widget
 
 ## 1.0.10
 
@@ -45,93 +117,43 @@
 - Removed material imports
 - Widget to handle route redirection based on a predicate
 
-## 1.0.11
+## 1.0.9
 
-- Added MustangScreen widget
+- Fix: Lint warnings
+- Fix: added null assertion for Mustang store update
 
-## 1.0.12
+## 1.0.8
 
-- Updated documentation
+- Renamed `WrenchStore` to `MustangStore` and `WrenchCache` to `MustangCache`
 
-## 1.0.13
+## 1.0.7
 
-- Added example
-- Fixed broken images in README
+- Aspects can accept arguments
 
-## 1.1.0
+## 1.0.6
 
-- Moved flutter widgets into mustang_widgets repo
-- Made mustang_core pure dart package
+- Framework introduced support for `before`, `after`, `around` Aspects
 
-## 1.1.1
+## 1.0.5
 
-- Converted to dart package project
+- Framework introduced support to consume events
 
-## 1.1.2
+## 1.0.4
 
-- Add example
+- Removed reference to dart:io package
 
-## 1.1.3
+## 1.0.3
 
-- Updated README
+- Removed reference to dart:io package
 
-## 1.1.4
+## 1.0.2
 
-- Updated README
+- Updated README, pubspec.yaml
 
-## 1.1.5
-- Added support for global events
+## 1.0.1
 
-## 1.1.6
-- Updated packages
+- Updated pubspec.yaml and README
 
-## 1.1.7
-- Introduced new annotation `WireNameField` to support custom name for the field when the object is serialized
+## 1.0.0
 
-## 1.1.8
-- lint fixes
-
-## 1.1.9
-- Updated documentation for Mustang Store and Mustang Cache
-- Deprecated redundant methods in Mustang Store
-
-## 1.1.10
-- doc fix
-
-## 1.1.11
-- Updated README
-
-## 1.1.12
-- Deleted `mustang.yaml` file changes from README
-- `MustangAppConfig`, a model and event, is available for all applications by default
-- Better debugging data for models
-
-## 1.1.13
-- Adding missing export
-
-## 3.0.0
-- Support for Dart 3
-
-## 3.0.1
-- Updated README
-
-## 3.0.2
-- Updated README
-
-## 3.0.3
-- Updated example
-
-## 3.0.4
-- Updated doc images
-
-## 3.0.5
-- lint fixes
-
-## 3.1.0
-- New API in MustangStore allows deletion of specific models from memory and from the persisted store
-
-## 3.1.1
-- Documentation and guidelines for screen widgets and service extensions
-
-## 3.2.0
-- New annotations to support batching of service methods
+- Initial version, created by Stagehand

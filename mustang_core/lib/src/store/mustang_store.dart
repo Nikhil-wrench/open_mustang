@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:hive/hive.dart';
 import 'package:mustang_core/src/cache/mustang_cache.dart';
+import 'package:mustang_core/src/contracts/mustang_state.dart';
 
 /// [MustangStore] is an in-memory key-value object database.
 ///
@@ -34,6 +35,13 @@ class MustangStore {
   static T? get<T>() {
     if (_hashStore.containsKey('$T')) {
       return _hashStore['$T']! as T;
+    }
+    return null;
+  }
+
+  static MustangState? getState({required String name}) {
+    if (_hashStore.containsKey(name)) {
+      return _hashStore[name]! as MustangState;
     }
     return null;
   }
