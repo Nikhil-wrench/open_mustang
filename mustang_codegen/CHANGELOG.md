@@ -1,3 +1,7 @@
+## 3.3.1
+
+- fallback value for states in mustang app config
+
 ## 3.3.0
 
 - Notify all mounted states when a shared model is updated

@@ -24,12 +24,6 @@ class _$MustangAppConfigSerializer
       serializers.serialize(object.config,
           specifiedType: const FullType(BuiltMap,
               const [const FullType(String), const FullType(Object)])),
-      'states',
-      serializers.serialize(object.states,
-          specifiedType: const FullType(BuiltMap, const [
-            const FullType(String),
-            const FullType(BuiltList, const [const FullType(String)])
-          ])),
     ];
 
     return result;
@@ -52,13 +46,6 @@ class _$MustangAppConfigSerializer
               specifiedType: const FullType(BuiltMap,
                   const [const FullType(String), const FullType(Object)]))!);
           break;
-        case 'states':
-          result.states.replace(serializers.deserialize(value,
-              specifiedType: const FullType(BuiltMap, const [
-                const FullType(String),
-                const FullType(BuiltList, const [const FullType(String)])
-              ]))!);
-          break;
       }
     }
 
@@ -70,18 +57,15 @@ class _$MustangAppConfig extends MustangAppConfig {
   @override
   final BuiltMap<String, Object> config;
   @override
-  final BuiltMap<String, BuiltList<String>> states;
+  final BuiltMap<String, BuiltList<String>>? states;
 
   factory _$MustangAppConfig(
           [void Function(MustangAppConfigBuilder)? updates]) =>
       (new MustangAppConfigBuilder()..update(updates))._build();
 
-  _$MustangAppConfig._({required this.config, required this.states})
-      : super._() {
+  _$MustangAppConfig._({required this.config, this.states}) : super._() {
     BuiltValueNullFieldError.checkNotNull(
         config, r'MustangAppConfig', 'config');
-    BuiltValueNullFieldError.checkNotNull(
-        states, r'MustangAppConfig', 'states');
   }
 
   @override
@@ -141,7 +125,7 @@ class MustangAppConfigBuilder
     final $v = _$v;
     if ($v != null) {
       _config = $v.config.toBuilder();
-      _states = $v.states.toBuilder();
+      _states = $v.states?.toBuilder();
       _$v = null;
     }
     return this;
@@ -166,14 +150,14 @@ class MustangAppConfigBuilder
     try {
       _$result = _$v ??
           new _$MustangAppConfig._(
-              config: config.build(), states: states.build());
+              config: config.build(), states: _states?.build());
     } catch (_) {
       late String _$failedField;
       try {
         _$failedField = 'config';
         config.build();
         _$failedField = 'states';
-        states.build();
+        _states?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'MustangAppConfig', _$failedField, e.toString());

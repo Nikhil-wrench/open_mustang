@@ -132,7 +132,7 @@ class ScreenStateGenerator extends Generator {
         void update(Set<String> updatedModels) {      
         MustangAppConfig mustangAppConfig =
         MustangStore.get<MustangAppConfig>() ?? MustangAppConfig();
-          BuiltMap<String, BuiltList<String>> mustangStates = mustangAppConfig.states;
+          BuiltMap<String, BuiltList<String>> mustangStates = mustangAppConfig.states ?? BuiltMap<String, BuiltList<String>>();
           Set<String> dirtyStates = <String>{};
           for (String model in updatedModels) {
             dirtyStates.addAll(mustangStates[model] ?? {});
