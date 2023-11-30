@@ -20,12 +20,12 @@ abstract class MustangAppConfig
 
   BuiltMap<String, Object> get config;
 
-  @BuiltValueField(serialize: false)
-  BuiltMap<String, BuiltList<String>>? get states;
+  BuiltMap<String, MustangAppStates> get stateMap;
 
   static Serializer<MustangAppConfig> get serializer =>
       _$mustangAppConfigSerializer;
 
-  static void _initializeBuilder(MustangAppConfigBuilder builder) =>
-      builder..config.addAll({});
+  static void _initializeBuilder(MustangAppConfigBuilder builder) => builder
+    ..config.addAll({})
+    ..stateMap.addAll({});
 }

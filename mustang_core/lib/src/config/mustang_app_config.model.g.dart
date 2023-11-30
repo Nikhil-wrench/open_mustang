@@ -24,6 +24,12 @@ class _$MustangAppConfigSerializer
       serializers.serialize(object.config,
           specifiedType: const FullType(BuiltMap,
               const [const FullType(String), const FullType(Object)])),
+      'stateMap',
+      serializers.serialize(object.stateMap,
+          specifiedType: const FullType(BuiltMap, const [
+            const FullType(String),
+            const FullType(MustangAppStates)
+          ])),
     ];
 
     return result;
@@ -46,6 +52,13 @@ class _$MustangAppConfigSerializer
               specifiedType: const FullType(BuiltMap,
                   const [const FullType(String), const FullType(Object)]))!);
           break;
+        case 'stateMap':
+          result.stateMap.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltMap, const [
+                const FullType(String),
+                const FullType(MustangAppStates)
+              ]))!);
+          break;
       }
     }
 
@@ -57,15 +70,18 @@ class _$MustangAppConfig extends MustangAppConfig {
   @override
   final BuiltMap<String, Object> config;
   @override
-  final BuiltMap<String, BuiltList<String>>? states;
+  final BuiltMap<String, MustangAppStates> stateMap;
 
   factory _$MustangAppConfig(
           [void Function(MustangAppConfigBuilder)? updates]) =>
       (new MustangAppConfigBuilder()..update(updates))._build();
 
-  _$MustangAppConfig._({required this.config, this.states}) : super._() {
+  _$MustangAppConfig._({required this.config, required this.stateMap})
+      : super._() {
     BuiltValueNullFieldError.checkNotNull(
         config, r'MustangAppConfig', 'config');
+    BuiltValueNullFieldError.checkNotNull(
+        stateMap, r'MustangAppConfig', 'stateMap');
   }
 
   @override
@@ -81,14 +97,14 @@ class _$MustangAppConfig extends MustangAppConfig {
     if (identical(other, this)) return true;
     return other is MustangAppConfig &&
         config == other.config &&
-        states == other.states;
+        stateMap == other.stateMap;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
     _$hash = $jc(_$hash, config.hashCode);
-    _$hash = $jc(_$hash, states.hashCode);
+    _$hash = $jc(_$hash, stateMap.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -97,7 +113,7 @@ class _$MustangAppConfig extends MustangAppConfig {
   String toString() {
     return (newBuiltValueToStringHelper(r'MustangAppConfig')
           ..add('config', config)
-          ..add('states', states))
+          ..add('stateMap', stateMap))
         .toString();
   }
 }
@@ -111,11 +127,11 @@ class MustangAppConfigBuilder
       _$this._config ??= new MapBuilder<String, Object>();
   set config(MapBuilder<String, Object>? config) => _$this._config = config;
 
-  MapBuilder<String, BuiltList<String>>? _states;
-  MapBuilder<String, BuiltList<String>> get states =>
-      _$this._states ??= new MapBuilder<String, BuiltList<String>>();
-  set states(MapBuilder<String, BuiltList<String>>? states) =>
-      _$this._states = states;
+  MapBuilder<String, MustangAppStates>? _stateMap;
+  MapBuilder<String, MustangAppStates> get stateMap =>
+      _$this._stateMap ??= new MapBuilder<String, MustangAppStates>();
+  set stateMap(MapBuilder<String, MustangAppStates>? stateMap) =>
+      _$this._stateMap = stateMap;
 
   MustangAppConfigBuilder() {
     MustangAppConfig._initializeBuilder(this);
@@ -125,7 +141,7 @@ class MustangAppConfigBuilder
     final $v = _$v;
     if ($v != null) {
       _config = $v.config.toBuilder();
-      _states = $v.states?.toBuilder();
+      _stateMap = $v.stateMap.toBuilder();
       _$v = null;
     }
     return this;
@@ -150,14 +166,14 @@ class MustangAppConfigBuilder
     try {
       _$result = _$v ??
           new _$MustangAppConfig._(
-              config: config.build(), states: _states?.build());
+              config: config.build(), stateMap: stateMap.build());
     } catch (_) {
       late String _$failedField;
       try {
         _$failedField = 'config';
         config.build();
-        _$failedField = 'states';
-        _states?.build();
+        _$failedField = 'stateMap';
+        stateMap.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'MustangAppConfig', _$failedField, e.toString());

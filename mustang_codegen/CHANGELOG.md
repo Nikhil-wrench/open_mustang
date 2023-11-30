@@ -1,3 +1,7 @@
+## 3.3.2
+
+- mustang state model and notify listeners update
+
 ## 3.3.1
 
 - fallback value for states in mustang app config

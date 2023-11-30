@@ -1,6 +1,10 @@
+## 3.3.2
+
+- mustang state model and enable serialization for mustang app config
+
 ## 3.3.1
 
-- disable serialization for mustang app config 
+- disable serialization for mustang app config
 
 ## 3.3.0
 

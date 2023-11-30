@@ -57,18 +57,18 @@ class ScreenStateGenerator extends Generator {
     List<String> putIfAbsent = [];
 
     putIfAbsent.addAll(stateModelTypes.map((state) => '''
-      ..states.putIfAbsent('$state', () => BuiltList<String>({}))
+      ..stateMap.putIfAbsent('$state', () => MustangAppStates())
     '''));
 
     modelStatesUpdate.addAll(stateModelTypes.map((state) => '''
       if(key == '$state') {
-        return value.rebuild((b) => b..add('$stateName'));
+        return value.rebuild((b) => b.states.add('$stateName'));
       }
     '''));
 
     modelStatesRemove.addAll(stateModelTypes.map((state) => '''
        if(key == '$state') {
-        return value.rebuild((b) => b..remove('$stateName'));
+        return value.rebuild((b) => b.states.remove('$stateName'));
       }
     '''));
 
@@ -109,7 +109,7 @@ class ScreenStateGenerator extends Generator {
           mustangAppConfig = mustangAppConfig.rebuild(
             (b) => b
             ${putIfAbsent.join('\n')}
-            ..states.updateAllValues(
+            ..stateMap.updateAllValues(
                   (key, value) {
                 ${modelStatesUpdate.join('\n')}
     
@@ -132,10 +132,11 @@ class ScreenStateGenerator extends Generator {
         void update(Set<String> updatedModels) {      
         MustangAppConfig mustangAppConfig =
         MustangStore.get<MustangAppConfig>() ?? MustangAppConfig();
-          BuiltMap<String, BuiltList<String>> mustangStates = mustangAppConfig.states ?? BuiltMap<String, BuiltList<String>>();
+          BuiltMap<String, MustangAppStates> mustangStates = mustangAppConfig.stateMap;
           Set<String> dirtyStates = <String>{};
+          dirtyStates.add('$stateName');
           for (String model in updatedModels) {
-            dirtyStates.addAll(mustangStates[model] ?? {});
+            dirtyStates.addAll(mustangStates[model]?.states ?? {});
           }
       
           for (String state in dirtyStates) {
@@ -156,16 +157,16 @@ class ScreenStateGenerator extends Generator {
           MustangStore.delete<$stateName>();
           
           MustangAppConfig mustangAppConfig =
-        MustangStore.get<MustangAppConfig>() ?? MustangAppConfig();
+          MustangStore.get<MustangAppConfig>() ?? MustangAppConfig();
           
           mustangAppConfig = mustangAppConfig.rebuild(
-              (b) => b
-                ..states.updateAllValues(
-                    (key, value) {
-                  ${modelStatesRemove.join('\n')}
-      
-                  return value;
-                },
+            (b) => b
+              ..stateMap.updateAllValues(
+                  (key, value) {
+                ${modelStatesRemove.join('\n')}
+    
+                return value;
+              },
             ),
           );
           MustangStore.update(mustangAppConfig);
