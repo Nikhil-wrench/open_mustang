@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
@@ -9,6 +10,7 @@ class RouteRedirect extends StatelessWidget {
     required this.child,
     this.pushReplace = true,
     this.loadingMsg = 'Redirecting...',
+    this.isOfflineMode = false,
   }) : super(key: key);
 
   /// If [redirect] returns true, this widget redirects the app to the [targetRoute],
@@ -27,6 +29,9 @@ class RouteRedirect extends StatelessWidget {
 
   /// Text to show while transitioning to the destination route
   final String loadingMsg;
+
+  /// show red border is offline mode active
+  final bool isOfflineMode;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +58,15 @@ class RouteRedirect extends StatelessWidget {
         ),
       );
     }
-    return child;
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFFFF),
+        border: Border.all(
+          color: Colors.red,
+          width: isOfflineMode ? 2 : 0,
+        ),
+      ),
+      child: child,
+    );
   }
 }
