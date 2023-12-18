@@ -60,7 +60,6 @@ class RouteRedirect extends StatelessWidget {
     }
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
         border: Border.all(
           color: Colors.red,
           width: isOfflineMode ? 2 : 0,
